@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    .login-card {
+      display: flex;
+      width: 900px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-card img {
+      width: 50%;
+      object-fit: cover;
+    }
+
+    .login-form {
+      width: 50%;
+      background-color: #0c0c0c;
+      color: white;
+      padding: 2rem;
+    }
+
+    .login-form h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .login-form p {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #ddd;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+      background-color: transparent;
+      border: 2px solid #007bff;
+      color: white;
+    }
+
+    .form-control:focus {
+      background-color: transparent;
+      border-color: #0056b3;
+      color: white;
+      box-shadow: none;
+    }
+
+    .input-group-text {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      width: 100%;
+      font-weight: bold;
+      background-color: #007bff;
+      border: none;
+      padding: 0.7rem;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .form-check-label,
+    .login-links a {
+      color: #ddd;
+    }
+
+    .login-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+      color: #fff;
+    }
+
+    .google-signin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      padding: 0.7rem;
+      margin-top: 1.5rem;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .google-signin:hover {
+      background: #f8f8f8;
+    }
+
+    .google-signin i {
+      color: #db4437;
+      margin-right: 8px;
+    }
+    .forgot-password-link{
+        font-size:0.875rem;
+        color: blue;
+        text-decoration: none;
+
+    }
+    .forgot-password-link:hover{
+      color: #0056b3;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Left Side Image -->
+      <img src="/img/loginbg.jpg" alt="Login Side Image" />
+
+      <!-- Right Side Form -->
+      <div class="login-form">
+        <h2>Account Log In</h2>
+        <p>Enter your valid details here</p>
+        <div style="color: red;"><%= message %></div>
+
+        
+        <form method="post" action="/login">
+          <div class="form-group">
+            <label for="email" class="sr-only">Email</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="form-control"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password" class="sr-only">Password</label>
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="Password"
+                required
+              />
+              <div class="input-group-append">
+                <span class="input-group-text" id="togglePassword">
+                  <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="remember"
+            />
+            <label class="form-check-label" for="remember">Remember Me</label>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">LOG IN</button>
+        </form>
+
+        <!-- Google Sign-In Button -->
+        <a href="/auth/google" class="google-signin">
+          <i class="fab fa-google"></i> Sign in with Google
+        </a>
+
+        <div class="login-links">
+          <div class="form-group d-flex justify-content-end">
+                <a href="/forgot-password" class="forgot-password-link ms-auto">Forgot Password?</a>
+          </div>
+          
+          <a href="/signup">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const passwordField = document.querySelector("#password");
+    const toggleIcon = document.querySelector("#toggleIcon");
+
+    togglePassword.addEventListener("click", () => {
+      const type = passwordField.type === "password" ? "text" : "password";
+      passwordField.type = type;
+      toggleIcon.classList.toggle("fa-eye");
+      toggleIcon.classList.toggle("fa-eye-slash");
+    });
+  </script>
+</body>
+</html>

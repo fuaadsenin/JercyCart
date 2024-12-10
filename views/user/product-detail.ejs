@@ -1,0 +1,265 @@
+<%- include("../../views/partials/user/header") %>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <!-- <span></span> Fashion -->
+                <span></span> Product Detail Page
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="product-detail accordion-detail">
+                        <div class="row mb-50">
+                            <!-- Product Images Section -->
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-gallery">
+                                    <!-- Main Image Display with Zoom -->
+                                    <div class="zoom-container">
+                                        <img id="main-product-image" class="border-radius-10 w-100" 
+                                             src="/uploads/re-image/<%=product.productImage[0]%>" 
+                                             alt="Main Product Image">
+                                    </div>
+
+                                    <!-- Thumbnail Slider -->
+                                    <div class="thumbnail-slider mt-3">
+                                        <% for (let i = 0; i < product.productImage.length; i++) { %>
+                                            <div class="thumbnail-item">
+                                                <img
+                                                    class="thumbnail border-radius-10"
+                                                    src="/uploads/re-image/<%= product.productImage[i] %>"
+                                                    alt="Thumbnail <%= i + 1 %>"
+                                                    onclick="changeMainImage('/uploads/re-image/<%= product.productImage[i] %>')"
+                                                >
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Details Section -->
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-info">
+                                    <h2 class="title-detail"><%= product.productName %></h2>
+
+                                    <div class="product-detail-rating">
+                                        <div class="product-rate-cover d-flex align-items-center justify-content-end">
+                                            <!-- Star Rating -->
+                                            <div class="product-rate d-inline-block position-relative">
+                                                <div class="bg-light rounded-pill p-2">
+                                                    <!-- Stars -->
+                                                    <div class="text-warning">
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star-half-alt"></i>
+                                                    </div>
+                                                    <!-- Progress Bar -->
+                                                    <div class="progress mt-2" style="height: 6px; width: 120px;">
+                                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Reviews -->
+                                            <span class="font-small ml-3 text-muted"> (25 reviews)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="product-price-cover mt-3">
+                                        <div class="product-price d-flex justify-content-between align-items-center p-4 bg-light rounded shadow-sm">
+                                            <!-- Sale and Regular Price Section -->
+                                            <div class="d-flex align-items-center">
+                                                <h4 class="text-brand fw-bold me-4 mb-0">₹<%= product.salePrice %></h4>
+                                                <h5 class="text-muted text-decoration-line-through me-4 mb-0" style="padding: 0px 20px ;text-decoration: line-through;">₹<%= product.regularPrice %></h5>
+                                            </div>
+                                            <!-- Offer Badge Section -->
+                                            <span class="badge bg-success px-4 py-2 text-white fs-6">
+                                                <% if (!totalOffer) { %>
+                                                    No Offers
+                                                <% } else { %>
+                                                    <%= totalOffer %>% OFF
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                        
+                                        
+                                        <!-- Short Description -->
+                                        <div class="short-desc mb-3">
+                                            <p class="text-secondary mb-0"><%= product.description %></p>
+                                        </div>
+                                        <hr class="border-color-1">
+                                    
+                                        <!-- Product Details -->
+                                        <div class="product-details mb-3">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2">
+                                                    <strong class="text-dark">Color:</strong> 
+                                                    <span class="text-secondary"><%= product.color %></span>
+                                                </li>
+                                                <li>
+                                                    <strong class="text-dark">Cloth Type:</strong> 
+                                                    <span class="text-secondary"><%= product.cloth %></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <hr class="border-color-1">
+                                    
+                                        <!-- Additional Information -->
+                                        <div class="product_sort_info">
+                                            <ul class="list-unstyled">
+                                                <li class="d-flex align-items-center mb-2">
+                                                    <i class="fi-rs-crown text-warning me-2"></i> 
+                                                    <span>1 Year Brand Warranty</span>
+                                                </li>
+                                                <li class="d-flex align-items-center mb-2">
+                                                    <i class="fi-rs-refresh text-info me-2"></i> 
+                                                    <span>30 Day Return Policy</span>
+                                                </li>
+                                                <li class="d-flex align-items-center">
+                                                    <i class="fi-rs-credit-card text-success me-2"></i> 
+                                                    <span>Cash on Delivery Available</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+
+                                    <div class="detail-extralink mt-4">
+                                        <div class="d-flex align-items-center justify-content-start gap-3">
+                                            <!-- Quantity Selector -->
+                                            <div class="detail-qty d-flex align-items-center border rounded px-3 py-2">
+                                                <button class="btn btn-outline-secondary btn-sm qty-down">
+                                                    <i class="fi-rs-angle-small-down">-</i>
+                                                </button>
+                                                <span class="qty-val text-center fw-bold fs-5 mx-3" id="quantity">1</span>
+                                                <button class="btn btn-outline-secondary btn-sm qty-up">
+                                                    <i class="fi-rs-angle-small-up">+</i>
+                                                </button>
+                                            </div>
+                                    
+                                            <!-- Add to Cart Button -->
+                                            <button type="submit" class="btn btn-primary btn-sm px-4">
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+
+                                    <ul class="product-meta list-unstyled font-sm text-muted mt-4">
+                                        <!-- Stock Status -->
+                                        <li class="d-flex align-items-center mb-3">
+                                            <strong class="me-2">Stock Status:</strong>
+                                            <span class="badge bg-success text-white">
+                                                <% if (quantity>0) { %>
+                                                    In Stock
+                                                <% } else { %>
+                                                   Out Off Stock
+                                                <% } %>
+
+                                                </span>
+                                        </li>
+                                    
+                                        <!-- Tags -->
+                                        <li class="d-flex align-items-center mb-3">
+                                            <strong class="me-2">Tags:</strong>
+                                            <div class="d-inline">
+                                                <a href="#" class="badge bg-primary text-white" rel="tag"><%= category.name %></a>
+                                            </div>
+                                        </li>
+                                    
+                                        <!-- Availability -->
+                                        <li class="d-flex align-items-center">
+                                            <strong class="me-2">Availability:</strong>
+                                            <span class="badge bg-info text-white"><%= quantity %> items</span>
+                                        </li>
+                                    </ul>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+.zoom-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: background-size 0.3s ease, background-position 0.3s ease;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.zoom-container:hover {
+    cursor: crosshair;
+}
+
+.thumbnail {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+    transform: scale(1.1);
+}
+</style>
+
+<script>
+    // Change the main image function
+    function changeMainImage(imagePath) {
+        const zoomContainer = document.querySelector('.zoom-container');
+        zoomContainer.style.backgroundImage = `url(${imagePath})`;
+    }
+
+    // Implement zoom functionality
+    const zoomContainer = document.querySelector('.zoom-container');
+    const mainImage = document.querySelector('#main-product-image');
+
+    // Set background as the main image
+    zoomContainer.style.backgroundImage = `url(${mainImage.src})`;
+    mainImage.style.visibility = "hidden";
+
+    // Mouse movement for zoom
+    zoomContainer.addEventListener('mousemove', (e) => {
+        const rect = zoomContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        zoomContainer.style.backgroundPosition = `${x}% ${y}%`;
+    });
+
+    // Wheel zoom functionality
+    let scale = 1;
+    zoomContainer.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomStep = 0.1;
+
+        if (e.deltaY < 0) {
+            scale = Math.min(scale + zoomStep, 3);
+        } else {
+            scale = Math.max(scale - zoomStep, 1);
+        }
+
+        zoomContainer.style.backgroundSize = `${scale * 100}%`;
+    });
+</script>
+
+<%- include("../../views/partials/user/footer") %>

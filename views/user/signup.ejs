@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create an Account</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #e0e0e0;
+    }
+
+    .signup-container {
+      background: #fff;
+      width: 360px;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .signup-container h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .signup-container p {
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form-group input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    }
+
+    .btn-primary {
+      background-color: #e53935;
+      color: #fff;
+      border: none;
+      padding: 0.8rem;
+      font-size: 1rem;
+      width: 100%;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+      background-color: #c62828;
+    }
+
+    .google-signup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      padding: 0.7rem;
+      margin-top: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .google-signup i {
+      color: #db4437;
+      margin-right: 8px;
+    }
+
+    .login-link {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .login-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h1>Create an account</h1>
+    <p>Enter your details here</p>
+    <form id="signup-form" method="post" action="/signup">
+      <div class="form-group">
+        <div id="name-error" class="error"></div>
+        <input type="text" id="name" name="name" placeholder="Name" required />
+      </div>
+      <div class="form-group">
+        <div id="email-error" class="error"></div>
+        <input type="email" id="email" name="email" placeholder="Email" required />
+      </div>
+      <div class="form-group">
+        <div id="phone-error" class="error"></div>
+        <input type="tel" id="phone" name="phone" placeholder="Phone Number" required />
+      </div>
+      <div class="form-group">
+        <div id="password-error" class="error"></div>
+        <input type="password" id="password" name="password" placeholder="Password" required />
+      </div>
+      <div class="form-group">
+        <div id="confirm-password-error" class="error"></div>
+        <input type="password" id="confirm-password" name="cpassword" placeholder="Confirm Password" required />
+      </div>
+      <button class="btn-primary" type="submit">Create Account</button>
+    </form>
+
+    <a href="/auth/google" class="google-signup">
+      <i class="fab fa-google"></i> Sign up with Google
+    </a>
+
+    <div class="login-link">
+      Already have an account? <a href="/login">Log in</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', function (e) {
+      e.preventDefault(); // Prevent form submission
+
+      let isValid = true;
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const phone = document.getElementById('phone');
+      const password = document.getElementById('password');
+      const confirmPassword = document.getElementById('confirm-password');
+
+      // Clear previous error messages
+      document.getElementById('name-error').textContent = '';
+      document.getElementById('email-error').textContent = '';
+      document.getElementById('phone-error').textContent = '';
+      document.getElementById('password-error').textContent = '';
+      document.getElementById('confirm-password-error').textContent = '';
+
+      // Validate Name
+      if (name.value.trim() === '') {
+        document.getElementById('name-error').textContent = 'Name is required.';
+        isValid = false;
+      }
+
+      // Validate Email
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email.value)) {
+        document.getElementById('email-error').textContent = 'Invalid email format.';
+        isValid = false;
+      }
+
+      // Validate Phone
+      const phonePattern = /^[0-9]{10}$/;
+      if (!phonePattern.test(phone.value)) {
+        document.getElementById('phone-error').textContent = 'Invalid phone number.';
+        isValid = false;
+      }
+
+      // Validate Password
+      if (password.value.trim().length < 6) {
+        document.getElementById('password-error').textContent = 'Password must be at least 6 characters long.';
+        isValid = false;
+      }
+
+      // Validate Confirm Password
+      if (password.value !== confirmPassword.value) {
+        document.getElementById('confirm-password-error').textContent = 'Passwords do not match.';
+        isValid = false;
+      }
+
+      // If form is valid, show SweetAlert
+      if (isValid) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Account Creating verify your OTP',
+          text: 'Welcome! Your account has been creating',
+          confirmButtonText: 'Continue'
+        }).then(() => {
+          this.submit(); // Submit the form after confirmation
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+

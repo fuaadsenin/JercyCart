@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Jercy Cart Template">
+    <meta name="keywords" content="Jercy Cart, fashion, creative, e-commerce">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jercy Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="./user-assets/css/main.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styling for the Jercy Cart Logo */
+        .logo-text {
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .logo-text .jercy {
+            color: red;
+        }
+
+        .logo-text .cart {
+            color: black;
+        }
+
+        .header__menu ul li a {
+            font-weight: 600;
+            color: #333;
+            text-transform: capitalize;
+        }
+
+        .header__menu ul li a:hover {
+            color: #ff7f50;
+        }
+
+        .header__nav__option .sign-in-link {
+            font-size: 16px;
+            color: #333;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .header__nav__option .sign-in-link:hover {
+            color: #ff7f50;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .header {
+            position: relative;
+            z-index: 500;
+        }
+        /* <style> */
+/* Main Image Styling */
+.main-image img {
+    width: 100%; /* Fit to container width */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Prevent cropping */
+    margin-bottom: 20px; /* Space between main image and thumbnails */
+}
+
+/* Thumbnail Slider Styling */
+.thumbnail-slider {
+    display: flex;
+    justify-content: center; /* Center thumbnails */
+    gap: 10px; /* Space between thumbnails */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    padding: 10px;
+    scrollbar-width: thin; /* For modern browsers */
+}
+
+/* Thumbnail Items */
+.thumbnail-item img {
+    width: 70px; /* Fixed thumbnail size */
+    height: 70px;
+    object-fit: cover;
+    border: 2px solid transparent; /* Border to show selection */
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s ease; /* Smooth hover effect */
+}
+
+/* Highlight Selected Thumbnail */
+.thumbnail-item img:hover {
+    border-color: #007bff; /* Blue border on hover */
+}
+/* Product Image and Thumbnail Styling */
+.main-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.thumbnail-slider {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.thumbnail-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.thumbnail-item img:hover {
+    transform: scale(1.1);
+    border-color: #007bff; /* Highlight border on hover */
+}
+
+/* Product Info Styling */
+.detail-info {
+    padding-left: 20px;
+}
+
+.product-price {
+    font-size: 20px;
+    color: #007bff;
+}
+
+.short-desc {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.product-sort-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Stock Code, Availability, and Tags Styling */
+.product-meta {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+    margin-top: 30px;
+    border-top: 2px solid #f0f0f0;
+    padding-top: 20px;
+}
+
+.product-meta li {
+    margin-bottom: 15px;
+}
+
+.product-meta .stock-code a,
+.product-meta .availability span {
+    font-weight: bold;
+    color: #007bff; /* Blue color for stock code and availability */
+}
+
+.product-meta .tags a {
+    font-weight: bold;
+    color: #28a745; /* Green color for tags */
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #eaf9e2; /* Light green background */
+    margin-right: 10px;
+}
+
+.product-meta .tags a:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Make the availability more visible */
+.in-stock {
+    color: #28a745; /* Green for availability */
+    font-weight: 600;
+}
+
+.out-of-stock {
+    color: #dc3545; /* Red color for out of stock */
+    font-weight: 600;
+}
+
+.product-meta .mb-5 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+neral font and body setup */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+}
+
+/* Container adjustments */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Breadcrumb style */
+.breadcrumb {
+    font-size: 14px;
+    color: #555;
+}
+
+.breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.breadcrumb span {
+    margin: 0 5px;
+}
+
+/* Product image styling */
+.main-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+.thumbnail-item {
+    cursor: pointer;
+}
+
+.thumbnail-item img {
+    width: 70px;
+    height: 70px;
+    margin-right: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-item img:hover {
+    opacity: 0.7;
+}
+
+/* Product Detail Title */
+.title-detail {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Product Price Section */
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    margin-left: 15px;
+}
+
+.save-price {
+    color: #f57224;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+/* Product Description */
+.short-desc {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+}
+
+/* Color and Cloth details */
+.product-details p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product-details strong {
+    color: #007bff;
+}
+
+/* Button Styling */
+.button-add-to-cart {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-add-to-cart:hover {
+    background-color: #0056b3;
+}
+
+/* Hover Effects for Product Extra Links */
+.product-extra-link2 a {
+    font-size: 18px;
+    color: #007bff;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.product-extra-link2 a:hover {
+    background-color: #f0f8ff;
+}
+
+/* Ratings Styling */
+.product-rating {
+    background-color: #ffc107;
+    height: 5px;
+    width: 100%;
+    border-radius: 3px;
+}
+
+.product-detail-rating .product-rate-cover {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.product-rate {
+    height: 16px;
+    width: 80%;
+    background-color: #ffc107;
+    border-radius: 3px;
+}
+
+/* Footer tweaks */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 30px 0;
+    text-align: center;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+
+footer a:hover {
+    background-color: #007bff;
+    border-radius: 3px;
+}
+
+
+</style>
+<!-- 
+    </style> -->
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Logo Section -->
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="#" class="logo-text">
+                            <span class="jercy">Jercy</span>
+                            <span class="cart">Cart</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Menu Section -->
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li class="active"><a href="#">Home</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- Navigation Options -->
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <% if (user) { %>
+                            <div class="dropdown">
+                                <a href="#" class="sign-in-link"><%=user.name %></a>
+                                <div class="dropdown-content">
+                                    <a href="/userProfile">Profile</a>
+                                    <a href="/logout">Logout</a>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <a href="/signup" class="sign-in-link">Sign Up</a>
+                            <a href="/login" class="sign-in-link">Log In</a>
+                        <% } %>
+                        <a href="/wishlist"><img src="img/icon/heart.png" alt="Wishlist"></a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt="Cart"> <span>0</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </header>
+</body>
+</html>
