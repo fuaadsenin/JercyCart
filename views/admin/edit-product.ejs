@@ -18,11 +18,13 @@
                 position: relative;
             }
 
-
             .error-message {
-                color: red;
-                display: none;
-            }
+    color: red;
+    display: block; /* Ensure that errors can be shown when needed */
+    font-size: 12px; /* Optional: Customize the size */
+    margin-top: 5px;
+}
+
         </style>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
     </head>
@@ -40,8 +42,7 @@
 
 
                     <div class="card-body">
-                        <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data"
-                            onsubmit="return validateForm()">
+                        <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data">
 
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Product Name</label>
@@ -55,7 +56,7 @@
                             <div class="mb-4">
                                 <label class="form-label">Full description</label>
                                 <input name="descriptionData" value="<%= product.description %>"
-                                    class="form-control border" rows="4">
+                                    class="form-control border" rows="4" id="descriptionid">
                                 <div id="description-error" class="error-message"></div>
                             </div>
                             <div class="row">
@@ -63,7 +64,7 @@
                                     <div class="mb-4">
                                         <label class="form-label">Regular price</label>
                                         <input placeholder="$" name="regularPrice" type="text"
-                                            value="<%= product.regularPrice %>" class="form-control border">
+                                            value="<%= product.regularPrice %>" class="form-control border" id="regularPriceid">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
                                 </div>
@@ -71,48 +72,48 @@
                                     <div class="mb-4">
                                         <label class="form-label">Sale price</label>
                                         <input name="salePrice" type="text" value="<%= product.salePrice %>"
-                                            class="form-control border">
+                                            class="form-control border" id="salePriceid">
                                     </div>
                                     <div id="salePrice-error" class="error-message"></div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Quantity</label>
-                                        <input name="quantity" type="text" value="<%= product.quantity %>"
-                                            class="form-control border">
-                                        <div id="quantity-error" class="error-message"></div>
+                                
+                                <div class="container mt-4">
+                                    <div class="row">
+                                        <!-- Small and Medium sizes -->
+                                        <div class="col-md-6">
+                                            <h5 class="text-danger" id="qtyErr"></h5>
+                                            <div class="mb-3">
+                                                <label for="smallQty" class="form-label">Small</label>
+                                                <input type="text" id="smallQty" name="smallQty" class="form-control" placeholder="Qty" value="<%=product.varient?.small||0%>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="mediumQty" class="form-label">Medium</label>
+                                                <input type="text" id="mediumQty" name="mediumQty" class="form-control" placeholder="Qty" value="<%=product.varient?.medium||0%>">
+                                            </div>
+                                        </div>
+                                
+                                        <!-- Large and X-large sizes -->
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="largeQty" class="form-label">Large</label>
+                                                <input type="text" id="largeQty" name="largeQty" class="form-control" placeholder="Qty" value="<%=product.varient?.large||0%>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="xLargeQty" class="form-label">X-large</label>
+                                                <input type="text" id="xLargeQty" name="xLargeQty" class="form-control" placeholder="Qty" value="<%=product.varient?.xLarge||0%>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
 
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">color</label>
-                                        <input name="flavour" type="text" value="<%= product.color %>"
-                                            class="form-control border">
-                                        <div id="flavour-error" class="error-message"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">cloth</label>
-                                        <input name="weight" type="text" value="<%= product.cloth %>"
-                                            class="form-control border">
-                                        <div id="weight-error" class="error-message"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="card mb-4">
+                     
 
 
                                 <div class="card-body">
                                     <div class="row gx-2">
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Category</label>
-                                            <select class="form-select border" style="width: 150px;" name="category">
+                                            <select class="form-select border" style="width: 150px;" name="category" id="categoryId">
                                                 <% for(let i=0;i<cat.length;i++){ %>
 
                                                     <option value="<%= cat[i].name %>">
@@ -218,8 +219,11 @@
                             <div>
 
 
-                                <button class="btn btn-md rounded font-sm hover-up" id="updatebtn" type="submit"
-                                    onclick="validateAndSubmit()">Update</button>
+                                <button class="btn btn-md rounded font-sm hover-up" id="updateBtn" type="button" productId="<%=product._id%>">
+                                    Update
+                                </button>
+                                
+                                
                             </div>
                         </form>
                     </div>
@@ -229,97 +233,10 @@
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+    <script src="/js/adminjs/editProduct.js"></script>
     <script>
 
 
-        function validateAndSubmit() {
-            if (validateForm()) {
-                document.forms[0].submit();
-            }
-        }
-
-
-
-
-        function validateForm() {
-            let isValid = true;
-            clearErrorMessages();
-
-            const name = document.getElementsByName('productName')[0].value;
-            const description = document.getElementsByName('descriptionData')[0].value;
-            const brand = document.getElementsByName('brand')[0].value;
-            const price = document.getElementsByName('regularPrice')[0].value;
-            const saleprice = document.getElementsByName('salePrice')[0].value;
-            const flavour = document.getElementsByName('flavour')[0].value;
-            const weight = document.getElementsByName('weight')[0].value;
-            const category = document.getElementsByName('category')[0].value;
-            const quantity = document.getElementsByName('quantity')[0].value;
-            const images = document.getElementById('input1').files;
-
-            if (name.trim() === "") {
-                displayErrorMessage('productName-error', 'Please enter a product name.');
-                isValid = false;
-            }
-
-            if (description.trim() === '') {
-                displayErrorMessage('description-error', 'Please enter a product description.');
-                isValid = false;
-            }
-
-            if (parseInt(quantity) < 0) {
-                displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-                isValid = false;
-            }
-
-            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
-            }
-
-            if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
-            }
-
-            if (flavour.trim() === "") {
-                displayErrorMessage('flavour-error', 'Please enter a flavour.');
-                isValid = false;
-            }
-
-            if (weight.trim() === "") {
-                displayErrorMessage('weight-error', 'Please enter weight.');
-                isValid = false;
-            }
-
-            if (category.trim() === "") {
-                displayErrorMessage('category-error', 'Please select a category.');
-                isValid = false;
-            }
-
-            if (!images.length) {
-                displayErrorMessage('images-error', 'Please select at least one image.');
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-        function displayErrorMessage(elementId, message) {
-            var errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
-
-
-        function clearErrorMessages() {
-            const errorElements = document.getElementsByClassName('error-message');
-            Array.from(errorElements).forEach(element => {
-                element.innerText = '';
-            });
-            const errorMessage = document.getElementById('errorMessage');
-
-
-        }
 
 
 
@@ -384,39 +301,6 @@
         }
 
 
-        const selectedImages = [];
-        document.getElementById("imageInput").addEventListener("change", handleFileSelect);
-
-
-        function handleFileSelect(event) {
-            const addedImagesContainer = document.getElementById("addedImagesContainer");
-            addedImagesContainer.innerHTML = "";
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                selectedImages.push(file);
-                const thumbnail = document.createElement("div");
-                thumbnail.classList.add("thumbnail");
-                const img = document.createElement("img");
-                img.src = URL.createObjectURL(file);
-                img.alt = "thumbnail";
-                img.style.width = "50px";
-                img.style.height = "auto";
-                const removeIcon = document.createElement("span");
-                removeIcon.classList.add("remove-icon");
-                removeIcon.innerHTML = "&times;";
-                removeIcon.addEventListener("click", function () {
-                    const index = selectedImages.indexOf(file);
-                    if (index !== -1) {
-                        selectedImages.splice(index, 1);
-                    }
-                    thumbnail.remove();
-                });
-                thumbnail.appendChild(img);
-                thumbnail.appendChild(removeIcon);
-                addedImagesContainer.appendChild(thumbnail);
-            }
-        };
         function deleteSingleImage(imageName, productId) {
   $.ajax({
     url: '/admin/deleteImage',
@@ -460,6 +344,7 @@
 
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 

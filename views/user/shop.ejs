@@ -1,0 +1,360 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+/* Main Container */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Shop Topbar */
+.shop-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-form {
+  display: flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 25px;
+  overflow: hidden;
+  max-width: 250px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.search-button {
+  padding: 8px 15px;
+  background-color: #1e918b;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 15px;
+  margin-right: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Sidebar Styling */
+.sidebar {
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 250px;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+.filter-item {
+  margin: 5px 0;
+}
+
+.filter-item a {
+  text-decoration: none;
+  color: #333;
+}
+
+.filter-item a:hover {
+  color: #007bff;
+}
+
+/* Product List Container */
+.product-list-container {
+  display: flex;
+  gap: 20px;
+  margin-left: 51px;
+}
+
+/* Product Grid */
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: calc(100% - 270px);
+}
+
+.product-card {
+  width: calc(33.333% - 20px);
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  background: #fff;
+}
+
+.product-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(215, 215, 215, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    color: white; 
+    font-size: 18px;
+    z-index: 10;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  }
+  .wishlist-btn.wishlist-active {
+  color: red; /* Active color when in wishlist */
+}
+
+.add-to-cart-btn {
+  background-color: #46698f;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.pagination a {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  color: #333;
+  text-decoration: none;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Price Filter */
+.price-filter {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.price-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.price-button {
+  padding: 12px 20px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  text-align: center;
+  font-size: 14px;
+}
+
+.price-button:hover {
+  background-color: #007bff;
+  color: white;
+  transform: scale(1.05);
+}
+
+.price-button:active {
+  transform: scale(0.95);
+}
+</style>
+
+<div class="main-container">
+  <section class="shop-page container">
+    <!-- Shop Topbar -->
+    <div class="shop-topbar">
+      <div class="search-bar">
+        <form action="/search" method="POST" class="search-form">
+          <input type="text" name="query" placeholder="Search items..." class="search-input" value="<%= search || '' %>" />
+          <input type="hidden" name="category" value="<%= selectedCategory %>" /> 
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+
+      <div class="sorting-dropdown">
+        <label for="sort-options">Sort by</label>
+        <select id="sort-options" class="sort-select" onchange="applySorting(this.value)">
+          <option value="" <%= !sortOption ? "selected" : "" %>>Select</option>
+          <option value="new" <%= sortOption === "new" ? "selected" : "" %>>New Arrivals</option>
+          <option value="asc" <%= sortOption === "asc" ? "selected" : "" %>>A-Z</option>
+          <option value="desc" <%= sortOption === "desc" ? "selected" : "" %>>Z-A</option>
+        </select>
+      </div>
+      
+      </div>
+
+      <!-- Sorting Dropdown -->
+      
+    </div>
+
+    <!-- Product List Container -->
+    <div class="product-list-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <button onclick="clearFilter()" style="background-color: greenyellow;color: rgb(0, 0, 0);border-radius: 5px;">Clear Filter</button>
+        <div class="filter-section">
+          <div class="filter-title">Categories</div>
+          <ul>
+            <% for (let i = 0; i < categories.length; i++) { %>
+              <li class="filter-item">
+                <a href="/shop?category=<%= categories[i]._id %>">
+                  <i class="fa fa-tag"></i> <%= categories[i].name %>
+                </a>
+              </li>
+            <% } %>
+          </ul>
+          
+        </div>
+
+        <!-- Filter by Price -->
+        <div class="price-filter">
+          <div class="filter-title">Filter by Price</div>
+          <div class="price-options">
+            <a href="/filterPrice?gt=0&lt=500&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sortOption || '' %>">
+              <button class="price-button">Under ₹500</button>
+            </a>
+            <a href="/filterPrice?gt=500&lt=1000&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sortOption || '' %>">
+              <button class="price-button">₹500 - ₹1000</button>
+            </a>
+            <a href="/filterPrice?gt=1000&lt=1500&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sortOption || '' %>">
+              <button class="price-button">₹1000 - ₹1500</button>
+            </a>
+            <a href="/filterPrice?gt=1500&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sortOption || '' %>">
+              <button class="price-button">Above ₹1500</button>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Product Grid -->
+      <main class="product-grid">
+        <% if (products.length > 0) { %>
+          <% for (let i = 0; i < products.length; i++) { %>
+            <div class="product-card">
+              <a
+  href="javascript:void(0);"
+  class="wishlist-btn <%= user.wishlist.includes(products[i]._id.toString()) ? 'wishlist-active' : '' %>"
+  onclick="toggleWishlist('<%= products[i]._id %>')"
+  data-product-id="<%= products[i]._id %>"
+>
+  <i class="fas fa-heart"></i>
+</a>
+              <a href="/productDetails?id=<%= products[i]._id %>">
+                <img src="/uploads/re-image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
+                <h4><%= products[i].productName %></h4>
+                <p>Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %> 
+                  <span class="text-muted">
+                    <strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike>
+                  </span>
+                </p>
+              </a>
+            </div>
+          <% } %>
+        <% } else { %>
+          <div class="no-products-message">
+            <p>No products found. Try adjusting your filters or search.</p>
+          </div>
+        <% } %>
+      </main>
+    </div>
+
+  </section>
+</div>
+<script>
+async function toggleWishlist(productId) {
+  const button = document.querySelector(`[data-product-id="${productId}"]`);
+  const isActive = button.classList.contains("wishlist-active");
+
+  try {
+    const response = await fetch(isActive ? "/removeFromWishlist" : "/addToWishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId }),
+    });
+
+    const data = await response.json();
+    if (data.status) {
+      button.classList.toggle("wishlist-active", !isActive); // Add or remove 'wishlist-active'
+      Swal.fire({
+        icon: "success",
+        title: isActive ? "Removed!" : "Added!",
+        text: isActive
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: data.message || "Action failed",
+      });
+    }
+  } catch (error) {
+    console.error("Error toggling wishlist:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while toggling the wishlist.",
+    });
+  }
+}
+
+function applySorting(sortOption) {
+  const currentUrl = new URL(window.location.href);
+  currentUrl.searchParams.set("sort", sortOption);
+  currentUrl.searchParams.set("page", 1);
+  window.location.href = currentUrl.toString();
+}
+function clearFilter(){
+  window.location.href='/shop';
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<%- include("../../views/partials/user/footer") %>

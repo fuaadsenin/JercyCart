@@ -1,0 +1,256 @@
+<%- include("../../views/partials/admin/header") %>
+
+<div id="reportContent" class="container">
+    <h1 class="text-center my-4">Sales Report</h1>
+
+    <!-- Overall Sales Stats -->
+    <div class="container my-5">
+        <h3 class="text-center mb-4">Overall Sales Summary</h3>
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm p-3 border-0 rounded">
+                    <h5 class="card-title">Total Sales Count</h5>
+                    <p class="card-text fs-4 fw-bold text-primary"><%= overall.count %></p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm p-3 border-0 rounded">
+                    <h5 class="card-title">Total Order Amount</h5>
+                    <p class="card-text fs-4 fw-bold text-success">₹<%= overall.totalAmount.toFixed(2) %></p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm p-3 border-0 rounded">
+                    <h5 class="card-title">Total Discount</h5>
+                    <p class="card-text fs-4 fw-bold text-danger">₹<%= overall.totalDiscount.toFixed(2) %></p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm p-3 border-0 rounded">
+                    <h5 class="card-title">Total Final Amount</h5>
+                    <p class="card-text fs-4 fw-bold text-success">₹<%= overall.totalFinalAmount.toFixed(2) %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Filter Form -->
+    <form id="sales-filter-form" class="filter-form mb-4 p-3 border rounded">
+        <fieldset>
+            <legend>Filter Options</legend>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <!-- Radio Buttons -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="all-data" id="allData" checked>
+                    <label class="form-check-label" for="allData">All Data</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="last-day" id="lastDay">
+                    <label class="form-check-label" for="lastDay">Last Day</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="last-week" id="lastWeek">
+                    <label class="form-check-label" for="lastWeek">Last Week</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="last-month" id="lastMonth">
+                    <label class="form-check-label" for="lastMonth">Last Month</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="last-year" id="lastYear">
+                    <label class="form-check-label" for="lastYear">Last Year</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" value="custom-date" id="customDate">
+                    <label class="form-check-label" for="customDate">Custom Date</label>
+                </div>
+    
+                <!-- Custom Date Picker (hidden by default) -->
+                <div id="custom-date-picker" class="d-flex align-items-center gap-3" style="display: none;">
+                    <div>
+                        <label for="startDate" class="form-label mb-0">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control">
+                    </div>
+                    <div>
+                        <label for="endDate" class="form-label mb-0">End Date</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4">Generate Report</button>
+        </div>
+    </form>
+    
+    <!-- Download Buttons -->
+    <div class="text-end mb-3">
+    
+        <button onclick="downloadExcel()" class="btn btn-info">Download Excel</button>
+        <button id="download-pdf-btn" class="btn btn-danger">Download PDF</button>
+    </div>
+
+    <!-- Sales Report Table -->
+    <div class="sales-report">
+        <table id="salesTable" class="table table-striped table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Invoice Date</th>
+                    <th>Total Price</th>
+                    <th>Discount</th>
+                    <th>Final Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (sales.length > 0) { %>
+                    <% sales.forEach(function(sale) { %>
+                        <tr>
+                            <td><%= sale.orderId %></td>
+                            <td><%= new Date(sale.invoiceDate).toLocaleDateString() %></td>
+                            <td><%= sale.totalPrice.toFixed(2) %></td>
+                            <td><%= sale.discount.toFixed(2) %></td>
+                            <td><%= sale.finalAmount.toFixed(2) %></td>
+                            <td><%= sale.status %></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center">No sales data available</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.0/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('sales-filter-form');
+        const customDatePicker = document.getElementById('custom-date-picker');
+        const radioButtons = document.querySelectorAll('input[name="filter"]');
+
+        // Initially hide the custom date picker
+        customDatePicker.style.display = 'none';
+
+        // Toggle custom date picker visibility when "Custom Date" is selected
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'custom-date') {
+                    customDatePicker.style.display = 'block';
+                } else {
+                    customDatePicker.style.display = 'none';
+                }
+            });
+        });
+
+        // Handle form submission with AJAX
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const filter = formData.get('filter');
+            const startDate = formData.get('startDate');
+            const endDate = formData.get('endDate');
+
+            // Validate custom date field
+            if (filter === 'custom-date' && (!startDate || !endDate)) {
+                return Swal.fire('Error', 'Please select both start and end dates for the custom range.', 'error');
+            }
+
+            try {
+                const response = await fetch('/admin/salesReport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ filter, startDate, endDate })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    updateSalesTable(result.sales);
+                    Swal.fire('Success', 'Sales report updated!', 'success');
+                } else {
+                    Swal.fire('Error', result.error || 'Failed to fetch report', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'An unexpected error occurred.', 'error');
+            }
+        });
+
+        // Update sales table dynamically
+        function updateSalesTable(sales) {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = '';
+
+            if (!sales.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No sales data available</td></tr>';
+                return;
+            }
+
+            sales.forEach(sale => {
+                tbody.innerHTML += 
+                    `<tr>
+                        <td>${sale.orderId}</td>
+                        <td>${new Date(sale.invoiceDate).toLocaleDateString()}</td>
+                        <td>${sale.totalPrice.toFixed(2)}</td>
+                        <td>${sale.discount.toFixed(2)}</td>
+                        <td>${sale.finalAmount.toFixed(2)}</td>
+                        <td>${sale.status}</td>
+                    </tr>`;
+            });
+        }
+
+      
+
+        // Excel download function
+        window.downloadExcel = function() {
+            const table = document.getElementById('salesTable');
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "Sales Report" });
+            XLSX.writeFile(workbook, "sales_report.xlsx");
+        };
+
+    })
+    document.getElementById("download-pdf-btn").addEventListener("click", async () => {
+  const filter = document.querySelector('input[name="filter"]:checked').value;
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+
+  const requestBody = { filter, startDate, endDate };
+
+  try {
+    const response = await fetch('/admin/sales-report-pdf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (response.ok) {
+      // Trigger file download
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'sales_report.pdf';
+      link.click();
+    } else {
+      Swal.fire('Error',"No data found", 'error');
+    }
+  } catch (err) {
+    Swal.fire('Error', 'An unexpected error occurred.', 'error');
+  }
+});
+
+</script>
+
+
+<%- include("../../views/partials/admin/footer") %>

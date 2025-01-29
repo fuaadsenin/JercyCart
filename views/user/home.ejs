@@ -1,213 +1,297 @@
 <%- include("../../views/partials/user/header") %>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-  .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #ff6b6b;
-      border: none;
-      border-radius: 5px;
-      transition: background-color 0.3s, transform 0.3s;
-      cursor: pointer;
-      text-align: center;
-  }
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+/>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
+<style>
+  /* General Button Styles */
+  .btn {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
+    text-align: center;
+  }
 
   .btn:hover {
-      background-color: #ff4c4c;
-      transform: translateY(-2px);
+    background-color: #ff4c4c;
+    transform: translateY(-2px);
   }
-
 
   .btn:active {
-      transform: translateY(1px);
+    transform: translateY(1px);
   }
+
+  /* Wishlist Button */
   .wishlist-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 50%;
-      color: #ff6b6b;
-      font-size: 18px;
-      z-index: 10;
-      transition: background-color 0.3s, color 0.3s, transform 0.3s;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(215, 215, 215, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    color: white; 
+    font-size: 18px;
+    z-index: 10;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  }
+  .wishlist-btn.wishlist-active {
+  color: red; /* Active color when in wishlist */
+}
+
+
+
+  /* Hero Banner Styles */
+  .hero-slider {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
   }
 
-
-  .wishlist-btn:hover {
-      background-color: rgba(255, 255, 255, 1);
-      color: #ff4c4c;
-      transform: translateY(-2px);
+  .swiper-container {
+    width: 100%;
+    height: 100%;
   }
 
-
-  .wishlist-btn:active {
-      transform: translateY(1px);
+  .single-hero-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
   }
 
-
-  .product-img-action-wrap {
-      position: relative;
+  .single-slider-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the entire area */
   }
 
-
-  .product-img {
-      position: relative;
-      display: block;
-      overflow: hidden;
+  .single-slider-content {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    color: #fff;
+    background-color: transparent; /* Dark overlay */
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
   }
 
-
-  .product-cart-wrap {
-      border: 1px solid #eee;
-      padding: 20px;
-      margin-bottom: 30px;
+  .single-slider-content p {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    animation: fadeInUp 1s ease-in-out;
   }
 
-
-  .product-content-wrap h6 {
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 5px;
+  /* Swiper Pagination & Navigation */
+  .swiper-pagination-bullet {
+    background: white;
+    opacity: 0.8;
   }
 
-
-  .product-content-wrap h5 {
-      font-size: 16px;
-      color: #ff6b6b;
-      margin-bottom: 10px;
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: white;
+    font-size: 24px;
   }
 
-
-  .product-content-wrap a {
-      display: inline-block;
-      padding: 8px 12px;
-      background-color: #ff6b6b;
-      color: white;
-      text-transform: uppercase;
-      font-size: 14px;
-      border-radius: 4px;
-      text-decoration: none;
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
-
-  .product-content-wrap a:hover {
-      background-color: #ff4c4c;
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
-<section class="hero">
-  <div class="hero__slider owl-carousel">
-      <div class="hero__items set-bg" data-setbg="img/hero/hero-1.jpg">
-          <div class="container">
-              <div class="row">
-                  <div class="col-xl-5 col-lg-7 col-md-8">
-                      <div class="hero__text">
-                          <h6>Summer Collection</h6>
-                          <h2>Fall - Winter Collections 2030</h2>
-                          <p>A specialist label creating luxury essentials. Ethically created.</p>
-                          <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                      </div>
-                  </div>
-              </div>
+
+<!-- Hero Section -->
+<section class="hero-slider">
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <% banner.slice(0, 2).forEach(bannerItem => { %>
+      <div class="swiper-slide">
+        <div class="single-hero-slider">
+          <div class="single-slider-img">
+            <img
+              src="/uploads/re-image/<%= bannerItem.image %>"
+              alt="<%= bannerItem.title %>"
+            />
           </div>
-      </div>
-      <div class="hero__items set-bg" data-setbg="img/hero/hero-2.jpg">
-          <div class="container">
-              <div class="row">
-                  <div class="col-xl-5 col-lg-7 col-md-8">
-                      <div class="hero__text">
-                          <h6>Summer Collection</h6>
-                          <h2>Fall - Winter Collections 2030</h2>
-                          <p>A specialist label creating luxury essentials.</p>
-                          <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                      </div>
-                  </div>
-              </div>
+          <div class="single-slider-content">
+            <p style="color: #f7dada"><%= bannerItem.description %></p>
+            <a href="<%= bannerItem.link %>" class="btn" style="color: #fff"
+              >Shop Now</a
+            >
           </div>
+        </div>
       </div>
+      <% }) %>
+    </div>
+    <!-- Swiper Navigation -->
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
   </div>
 </section>
-<section class="banner spad">
+
+<!-- Banner Section -->
+<section class="banner-area pt-5 pb-5">
   <div class="container">
-      <div class="row">
-          <div class="col-lg-7 offset-lg-4">
-              <div class="banner__item">
-                  <div class="banner__item__pic">
-                      <img src="img/banner/banner-1.jpg" alt="Clothing Collections 2030">
-                  </div>
-                  <div class="banner__item__text">
-                      <h2>Clothing Collections 2030</h2>
-                      <a href="#">Shop now</a>
-                  </div>
-              </div>
-          </div>
-          <div class="col-lg-5">
-              <div class="banner__item banner__item--middle">
-                  <div class="banner__item__pic">
-                      <img src="img/banner/banner-2.jpg" alt="Accessories">
-                  </div>
-                  <div class="banner__item__text">
-                      <h2>Accessories</h2>
-                      <a href="#">Shop now</a>
-                  </div>
-              </div>
-          </div>
-          <div class="col-lg-7">
-              <div class="banner__item banner__item--last">
-                  <div class="banner__item__pic">
-                      <img src="img/banner/banner-3.jpg" alt="Shoes Spring 2030">
-                  </div>
-                  <div class="banner__item__text">
-                      <h2>Shoes Spring 2030</h2>
-                      <a href="#">Shop now</a>
-                  </div>
-              </div>
-          </div>
+    <div class="row">
+      <% banner.slice(2).forEach(bannerItem => { %>
+      <div class="col-lg-4 col-md-6">
+        <div class="single-banner">
+          <a href="<%= bannerItem.link %>">
+            <img
+              src="/uploads/re-image/<%= bannerItem.image %>"
+              alt="<%= bannerItem.title %>"
+              style="width: 100%; height: auto"
+            />
+          </a>
+        </div>
       </div>
+      <% }) %>
+    </div>
   </div>
 </section>
+
+<!-- Product Section -->
 <section class="product spad">
   <div class="container">
-      <div class="row">
-          <div class="col-lg-12">
-              <ul class="filter__controls">
-                  <li data-filter=".new-arrivals">New Arrivals</li>
-              </ul>
+    <div class="row">
+      <div class="col-lg-12">
+        <ul class="filter__controls">
+          <li data-filter=".new-arrivals">New Arrivals</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row product__filter">
+      <% for(let i = 0; i < products.length; i++) { %>
+      <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+        <div class="product-cart-wrap mb-30">
+          <div class="product-img-action-wrap">
+            <div class="product-img product-img-zoom">
+              <a href="/productDetails?id=<%= products[i]._id %>">
+                <img
+                  class="default-img"
+                  src="/uploads/re-image/<%= products[i].productImage[0] %>"
+                  alt="<%= products[i].productName %>"
+                />
+              </a>
+            </div>
+            <a
+            href="javascript:void(0);"
+            class="wishlist-btn <%= user && user.wishlist && user.wishlist.includes(products[i]._id.toString()) ? 'wishlist-active' : '' %>"
+            onclick="<%= user ? `toggleWishlist('${products[i]._id}')` : 'alert(\'Please log in to add to wishlist\')' %>"
+            data-product-id="<%= products[i]._id %>"
+          >
+            <i class="fas fa-heart"></i>
+          </a>
+          
           </div>
+          <div class="product-content-wrap">
+            <h6><%= products[i].productName %></h6>
+            <h5>₹ <%= products[i].salePrice %></h5>
+          </div>
+        </div>
       </div>
-      <div class="row product__filter">
-        <%for(let i=0;i<products.length;i++){%>
-              <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                  <div class="product-cart-wrap mb-30">
-                      <div class="product-img-action-wrap">
-                          <div class="product-img product-img-zoom">
-
-                              <a href="/productDetails?id=<%=products[i]._id%>">
-                                  <img class="default-img" src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>">
-                              </a>
-                          </div>
-                          <a href="/addToWhishlist?id<%=products[i]._id%>" class="wishlist-btn">
-                              <i class="fas fa-heart"></i>
-                          </a>
-                      </div>
-
-
-                      <div class="product-content-wrap">
-                          <h6><%=products[i].productName%></h6>
-                          <h5><%=products[i].salePrice%></h5>
-                          <a href="/addToCart?id<%=products[i]._id%>">Add to cart</a>
-                      </div>
-                  </div>
-              </div>
-              <%}%>
-      </div>
+      <% } %>
+    </div>
   </div>
 </section>
+
 <%- include("../../views/partials/user/footer") %>
 
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  var swiper = new Swiper(".swiper-container", {
+    slidesPerView: 1,
+    loop: true,
+    autoplay: {
+      delay: 10000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    effect: "fade", // Smooth fade effect
+    fadeEffect: {
+      crossFade: true,
+    },
+  });
+</script>
+<script>
+  async function toggleWishlist(productId) {
+  const button = document.querySelector(`[data-product-id="${productId}"]`);
+  const isActive = button.classList.contains("wishlist-active");
 
+  try {
+    const response = await fetch(isActive ? "/removeFromWishlist" : "/addToWishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId }),
+    });
+
+    const data = await response.json();
+    if (data.status) {
+      button.classList.toggle("wishlist-active", !isActive); // Add or remove 'wishlist-active'
+      Swal.fire({
+        icon: "success",
+        title: isActive ? "Removed!" : "Added!",
+        text: isActive
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: data.message || "Action failed",
+      });
+    }
+  } catch (error) {
+    console.error("Error toggling wishlist:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while toggling the wishlist.",
+    });
+  }
+}
+
+</script>

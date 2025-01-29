@@ -6,11 +6,16 @@ const passport = require("./config/passport");
 const env = require("dotenv").config();
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
+const bodyParser = require('body-parser')
 const db = require("./config/db");
 db();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(bodyParser.json({ limit: '50mb' })); // Adjust the limit as needed
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -38,7 +43,7 @@ app.set("views", [
   path.join(__dirname, "views/admin"),
 ]);
 app.use(express.static(path.join(__dirname, "public")));
-
+ 
 
 
 

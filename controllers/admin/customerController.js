@@ -9,7 +9,7 @@ const customerInfo = async (req, res) => {
 
     let page = 1;
     if (req.query.page) {
-      page = parseInt(req.query.page); // Convert to integer
+      page = parseInt(req.query.page);
     }
 
     const limit = 3; // Number of items per page
@@ -34,7 +34,6 @@ const customerInfo = async (req, res) => {
 
     const totalPages = Math.ceil(count / limit);
 
-    // Pass data and pagination details to the template
     res.render("customers", {
       data: userData,
       totalPages,

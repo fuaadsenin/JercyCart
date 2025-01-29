@@ -1,0 +1,147 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+  .order-details-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-family: 'Arial', sans-serif;
+  }
+
+  .card-container {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+  }
+
+  .card {
+      flex: 1; /* Makes cards equal width */
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1rem;
+      color: #555;
+  }
+
+  .card h3 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+  }
+
+  .card p {
+      margin: 10px 0;
+  }
+
+  .card strong {
+      color: #333;
+  }
+
+  .product-list {
+      margin-top: 20px;
+  }
+
+  .product-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 15px;
+  }
+
+  .product-item:last-child {
+      border-bottom: none;
+  }
+
+  .product-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+  }
+
+  .product-info {
+      flex: 1;
+      color: #555;
+  }
+
+  .product-info .product-name {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #333;
+  }
+
+  .product-info span {
+      display: block;
+      margin-bottom: 5px;
+  }
+
+  .no-order-details {
+      font-size: 1.4rem;
+      color: #777;
+      text-align: center;
+      margin-top: 50px;
+  }
+</style>
+
+<div class="order-details-container">
+  <% if (order) { %>
+      <div class="card-container">
+          <!-- Order Details Card -->
+          <div class="card">
+              <h3>Order Details</h3>
+              <p><strong>Order ID:</strong> <%= order.orderId %></p>
+              <p><strong>Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+              <p><strong>Total Price:</strong> ₹<%= order.finalAmount.toLocaleString('en-IN') %></p>
+              <p><strong>Status:</strong> 
+                <span class="order-status <%= order.status.toLowerCase() %>">
+                    <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                </span>
+              </p>
+
+              <!-- Ordered Items -->
+              <div class="product-list">
+                  <% order.orderedItems.forEach(function(item) { %>
+                      <div class="product-item">
+                          <img 
+                              src="/uploads/re-image/<%= (item.product.productImage && item.product.productImage.length > 0) ? item.product.productImage[0] : 'default.jpg' %>" 
+                              alt="<%= item.product.name %>" 
+                              class="product-image">
+                          <div class="product-info">
+                              <span class="product-name"><%= item.product.name %></span>
+                              <span><strong>Price:</strong> ₹<%= item.price.toLocaleString('en-IN') %></span>
+                              <span><strong>Quantity:</strong> <%= item.quantity %></span>
+                              <span><strong>Size:</strong> <%= item.size || 'N/A' %></span>
+                          </div>
+                      </div>
+                  <% }); %>
+              </div>
+          </div>
+
+          <!-- Shipping Address Card -->
+          <div class="card">
+              <h3>Shipping Address</h3>
+              <p><strong>Address Type:</strong> <%= address.addressType %> Address</p>
+              <p><strong>Landmark:</strong> <%= address.landMark || 'N/A' %></p>
+              <p><strong>City:</strong> <%= address.city.trim() %></p>
+              <p><strong>State:</strong> <%= address.state %></p>
+              <p><strong>Pincode:</strong> <%= address.pincode %></p>
+              <p><strong>Phone:</strong> <%= address.phone %></p>
+              <% if (address.altPhone) { %>
+                  <p><strong>Alternate Phone:</strong> <%= address.altPhone %></p>
+              <% } %>
+          </div>
+      </div>
+  <% } else { %>
+      <p class="no-order-details">No details found for this order.</p>
+  <% } %>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>

@@ -1,0 +1,225 @@
+<style>
+  .order-details-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: "Arial", sans-serif;
+  }
+  .align-left {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .align-left:hover {
+    background-color: #2980b9;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+
+  .order-header h2 {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+  }
+
+  .order-status {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 20px;
+    color: #fff;
+    text-transform: capitalize;
+  }
+
+  .order-status.pending {
+    background-color: #ffc107;
+  }
+
+  .order-status.shipped {
+    background-color: #17a2b8;
+  }
+
+  .order-status.delivered {
+    background-color: #28a745;
+  }
+
+  .order-status.cancelled {
+    background-color: #dc3545;
+  }
+
+  .order-summary {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .order-summary p {
+    margin: 10px 0;
+  }
+
+  .order-summary strong {
+    color: #333;
+  }
+
+  .product-list {
+    margin-top: 20px;
+  }
+
+  .product-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+  }
+
+  .product-item:last-child {
+    border-bottom: none;
+  }
+
+  .product-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+  }
+
+  .product-info {
+    flex: 1;
+    color: #555;
+  }
+
+  .product-info .product-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  .product-info span {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .no-order-details {
+    font-size: 1.4rem;
+    color: #777;
+    text-align: center;
+    margin-top: 50px;
+  }
+</style>
+
+<div class="order-details-container">
+  <% if (order) { %>
+  <!-- Order Header -->
+  <div class="order-header">
+    <h2>Order Details</h2>
+    <span class="order-status <%= order.status.toLowerCase() %>">
+      <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+    </span>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="order-summary">
+    <p><strong>Order ID:</strong> <%= order.orderId %></p>
+    <input type="hidden" id="orderId" value="<%= order.orderId %>" />
+
+    <p>
+      <strong>Order Date:</strong> <%= new
+      Date(order.createdAt).toLocaleDateString() %>
+    </p>
+    <p>
+      <strong>Total Price:</strong> ₹<%=
+      order.finalAmount.toLocaleString('en-IN') %>
+    </p>
+    <p><strong>Shipping Address:</strong></p>
+
+    <p><%= address.addressType %> Address</p>
+    <p><%= address.landMark || 'N/A' %></p>
+    <p><%= address.city %>, <%= address.state %> - <%= address.pincode %></p>
+    <p><strong>Phone:</strong> <%= address.phone %></p>
+    <% if (address.altPhone) { %>
+    <p><strong>Alternate Phone:</strong> <%= address.altPhone %></p>
+    <% } %>
+  </div>
+
+  <!-- Ordered Items -->
+  <div class="product-list">
+    <% order.orderedItems.forEach(function(item) { %>
+    <div class="product-item">
+      <img
+        src="/uploads/re-image/<%= item.product.productImage[0] || 'default.jpg' %>"
+        alt="<%= item.product.name %>"
+        class="product-image"
+      />
+      <div class="product-info">
+        <span class="product-name"><%= item.product.productName %></span>
+        <span
+          ><strong>Price:</strong> ₹<%= item.price.toLocaleString('en-IN')
+          %></span
+        >
+        <span><strong>Quantity:</strong> <%= item.quantity %></span>
+        <span><strong>Size:</strong> <%= item.size || 'N/A' %></span>
+      </div>
+    </div>
+    <% }); %>
+    <div>
+      <button id="downloadInvoiceBtn" class="btn btn-primary align-left">
+        Download Invoice
+      </button>
+    </div>
+  </div>
+  <% } else { %>
+  <p class="no-order-details">No details found for this order.</p>
+  <% } %>
+</div>
+<script>
+  document
+    .getElementById("downloadInvoiceBtn")
+    .addEventListener("click", async function () {
+      const orderId = "<%= order._id %>"; // Use the correct order ID dynamically
+
+      try {
+        // Send a GET request to the server to generate the invoice
+        const response = await fetch(`/generate-invoice/${orderId}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to generate invoice");
+        }
+
+        // Get the invoice PDF as a Blob
+        const pdfBlob = await response.blob();
+
+        // Create a download link for the PDF
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(pdfBlob);
+        link.download = `invoice_${orderId}.pdf`; // Customize filename
+        link.click(); // Trigger the download
+      } catch (error) {
+        console.error("Error downloading invoice:", error);
+        alert("There was an error while downloading the invoice.");
+      }
+    });
+</script>

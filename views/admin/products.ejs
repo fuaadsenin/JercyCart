@@ -27,29 +27,30 @@
     </style>
 </head>
 
-<div class="content-header">
-    <div>
-        <h2 class="content-title card-title">Products</h2>
-    </div>
-</div>
+
 
 <header class="card-header text-center mb-20">
+    <div class="content-header">
+        
+            <h2 class="content-title card-title" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-size:xx-large;">Products</h2>
+        
+
     <form action="" method="get" class="d-inline">
         <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
             <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search">
             <button class="btn border-0" type="submit">Search</button>
         </div>
     </form>
+    </div>
 </header>
 
 <div class="right mt-5">
     <table class="table table-striped">
-        <thead>
+        <thead style="background-color: aquamarine ;font-size: larger;font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
             <tr>
                 <th><b>Product name</b></th>
                 <th><b>Category</b></th>
-                <th><b>Color</b></th>
-                <th><b>Cloth</b></th>
+                <th><b>Stock</b></th>
                 <th><b>Sale Price</b></th>
                 <th><b>Offer Price</b></th>
                 <th><b>Offer </b></th>
@@ -62,53 +63,71 @@
         <tbody>
             <% for (let i = data.length - 1; i >= 0; i--) { %>
             <tr>
+                <!-- Product Name -->
                 <td><%= data[i].productName %></td>
-                <td><%= data[i].category.name %></td>
-                <td><%= data[i].color || 'N/A' %></td>
-                <td><%= data[i].cloth || 'N/A' %></td>
-                <td><%= data[i].salePrice %></td>
+                
+                <!-- Category -->
+                <td><%= data[i].category ? data[i].category.name : 'N/A' %></td>
+                
+                <!-- Stock Status -->
                 <td>
-                    <%if(locals.data[i].productOffer){%>
-                        <%=data[i].productOffer%>
-
-                        <%}else{%>
-                            0%
-                            <%}%>
+                    <% if (
+                        data[i].varient.small <= 0 &&
+                        data[i].varient.medium <= 0 &&
+                        data[i].varient.large <= 0 &&
+                        data[i].varient.xLarge <= 0
+                    ) { %>
+                        Out of Stock
+                    <% } else { %>
+                        Available
+                    <% } %>
+                </td>
+                
+                <!-- Sale Price -->
+                <td><%= data[i].salePrice %></td>
+                
+                <!-- Product Offer -->
+                <td>
+                    <%= data[i].productOffer ? data[i].productOffer : '0%' %>
                 </td>
                 
                 <!-- Offer Section (Add/Remove) -->
                 <td>
-                    <%if(locals.data[i].productOffer===0){%>
-                    <div class="btn-group">
-                        <button class="btn btn-info" onclick="addOffer('<%=data[i]._id%>')"><a href="#" class="text-white">Add Offer</a></button>
-                        <%}else{%>
-                        <button class="btn btn-info" onclick="removeOffer('<%=data[i]._id%>')"><a href="#" class="text-white">Remove</a></button>
-                        <%}%>
+                    <% if (!data[i].productOffer || data[i].productOffer === '0%') { %>
+                        <button class="btn btn-info" onclick="addOffer('<%= data[i]._id %>')">Add Offer</button>
+                    <% } else { %>
+                        <button class="btn btn-info" onclick="removeOffer('<%= data[i]._id %>')">Remove Offer</button>
+                    <% } %>
+                </td>
+                
+                <!-- Quantity -->
+                <td><%= data[i].quantity %></td>
+                
+                <!-- Action Section (Block/Unblock) -->
+                <td>
+                    <div class="block-unblock">
+                        <% if (!data[i].isBlocked) { %>
+                            <button class="btn btn-danger">
+                                <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Block</a>
+                            </button>
+                        <% } else { %>
+                            <button class="btn btn-success">
+                                <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Unblock</a>
+                            </button>
+                        <% } %>
                     </div>
                 </td>
                 
-                <!-- Quantity Section -->
-                <td><%= data[i].quantity %></td>
-
-                <!-- Action Section (Block/Unblock) -->
-                <td>
-                  
-                    <div class="block-unblock">
-                        <%if(data[i].isBlocked===false){%>
-                        <button class="btn btn-danger"><a href="/admin/blockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Block</a></button>
-                        <%}else{%>
-                        <button class="btn btn-success"><a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a></button>
-                        <%}%>
-                    </div>
-                </td>
-
                 <!-- Edit Section -->
                 <td>
-                    <button class="btn btn-info"><a href="/admin/editProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Edit</a></button>
+                    <button class="btn btn-info">
+                        <a href="/admin/editProduct?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Edit</a>
+                    </button>
                 </td>
             </tr>
             <% } %>
         </tbody>
+        
     </table>
 </div>
 

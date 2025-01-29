@@ -32,7 +32,9 @@ const addCategory = async (req, res) => {
   try {
     // Validate category name starts with a capital letter
     if (!/^[A-Z]/.test(name)) {
-      return res.status(400).json({ error: "Category name must start with a capital letter." });
+      return res
+        .status(400)
+        .json({ error: "Category name must start with a capital letter." });
     }
 
     // Check if the category already exists
@@ -50,8 +52,8 @@ const addCategory = async (req, res) => {
     // Save the category to the database
     await newCategory.save();
 
-    // Redirect to the category management page
-    return res.redirect("/admin/category");
+    // Send a success response
+    return res.status(200).json({ message: "Category added successfully" });
   } catch (error) {
     console.error("Error adding category:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -168,31 +170,33 @@ const getEditCategory = async (req, res) => {
 
 const editCategory = async (req, res) => {
   try {
-    const id = req.params.id;
-    const { categoryName, description } = req.body; // Match the name "categoryName" from the form
+    const { id } = req.query;
 
-    // Check if the category already exists
-    const existingCategory = await Category.findOne({ name: categoryName });
+    const { name, description } = req.body; 
+
+    
+    const existingCategory = await Category.findOne({ name: name });
     if (existingCategory) {
       return res
         .status(400)
         .json({ error: "Category already exists, please choose another name" });
     }
 
-    // Update the category
+    
     const updatedCategory = await Category.findByIdAndUpdate(
       id,
       {
-        name: categoryName, // Use categoryName from the form
+        name, 
         description: description,
       },
       { new: true }
     );
-
     if (updatedCategory) {
-      res.redirect("/admin/category");
-    } else {
-      res.status(404).json({ error: "Category not found" });
+      return res.status(200).json({ error: "updated Succesfully" });
+    }
+
+    if (!updatedCategory) {
+      return res.status(400).json({ error: "Category not found" });
     }
   } catch (error) {
     console.error(error);

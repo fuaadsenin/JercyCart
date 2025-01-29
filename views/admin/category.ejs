@@ -16,7 +16,6 @@
     .form-control {
       width: 100%;
       padding: 8px;
-      margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
       box-sizing: border-box;
@@ -68,19 +67,21 @@
   </style>
 </head>
 <body>
-  <section class="content-main">
-    <div class="content-header">
-      <div>
-        <h2 class="content-title card-title">Category</h2>
-      </div>
-    </div>
-    <header class="card-header text-center mb-20">
+  
+    <header class="card-header text-center ">
+      <section >
+        <div class="content-header">
+          
+            <h2 class="content-title card-title" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Category</h2>
+          
+        
       <form action="/admin/category/" method="get" class="d-inline">
         <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px">
-          <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search"/>
+          <input type="text" class="form-control border-0 rounded-pill" placeholder="Search categories" name="search"/>
           <button class="btn" type="submit">Search</button>
         </div>
       </form>
+        </div>
     </header>
     <div class="card">
       <div class="card-body">
@@ -190,50 +191,69 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script>
-    function handleFormSubmit(event){
-        event.preventDefualt()
-        if(!validateForm()){
-            return
-        }
-        const name=document.getElementsByName("name")[0].value
-        const description=document.getElementById("descriptionId").value
-
-        fetch('/admin/addCategory',{
-          method:'POST',
-          headers:{
-            'content-type':'application/json',
-            
-          },
-          body:JSON.stringify({name,description})
-
-        })
-        .then(response=>{
-          if(!response.ok){
-            return response.json().then(err=>{
-              throw new Error(err.error);
-            })
-          }
-          return response.json();
-        })
-        .then(data=>{
-          location.reload()
-        })
-        .catch(error=>{
-          if(error.message==="Category already exixst"){
-            Swal.fire({
-              icon:'error',
-              title:"Oops",
-              text:"Category already exists"
-            })
-          }else{
-            Swal.fire({
-              icon:"error",
-              title:"oops",
-              text:"An error occured while adding the category"
-            })
-          }
-        })
+    function handleFormSubmit(event) {
+    event.preventDefault(); // Corrected spelling
+    if (!validateForm()) {
+        return;
     }
+
+    const name = document.getElementsByName("name")[0].value;
+    const description = document.getElementById("descriptionId").value;
+
+    fetch('/admin/addCategory', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+  },
+  body: JSON.stringify({ name, description })
+})
+  .then(async (response) => {
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error); // Error from the server
+    }
+    return response.json(); // Parse success response
+  })
+  .then((data) => {
+    console.log(data);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: 'Category added successfully',
+      timer: 1000, // Stay for 1 second
+      showConfirmButton: false, // Hide the OK button
+    });
+    location.reload(); // Reload page after success
+  })
+  .catch((error) => {
+    console.error('Error:', error.message);
+
+    // Handle specific server-side errors
+    if (error.message === "Category already exists.") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops',
+        text: 'Category already exists.',
+      });
+    } else if (error.message === "Category name must start with a capital letter.") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Category name must start with a capital letter.',
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops',
+        text: 'An error occurred while adding the category',
+      });
+    }
+  });
+
+
+}
+
 
     function validateForm() {
   clearErrorMessages();
@@ -242,25 +262,19 @@
   let isValid = true;
 
   // Validate Name
-  if (name === "") {
+  if (name.trim() === "") {
     displayErrorMessage("name-error", "Please enter a name.");
     isValid = false;
-  } else if (!/^[A-Z]/.test(name)) {
+  } else if (!/^[A-Z]/.test(name.trim())) {
     displayErrorMessage(
       "name-error",
       "Category name must start with a capital letter."
     );
     isValid = false;
-  } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-    displayErrorMessage(
-      "name-error",
-      "Category name should contain only alphabetic characters."
-    );
-    isValid = false;
-  }
+  } 
 
   // Validate Description
-  if (description === "") {
+  if (description.trim() === "") {
     displayErrorMessage("description-error", "Please enter a description.");
     isValid = false;
   }
@@ -365,4 +379,5 @@ async function removeOffer(categoryId) {
 }
 
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <%- include("../../views/partials/admin/footer") %>

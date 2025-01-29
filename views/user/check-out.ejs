@@ -1,0 +1,886 @@
+<%- include("../../views/partials/user/header") %>
+
+<!-- Font Awesome for Icons -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  rel="stylesheet"
+/>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #343a40;
+  }
+  /* header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-links a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+} */
+
+  .containers {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin: 40px auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .left-section {
+    width: 60%;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+  }
+
+  .right-section {
+    width: 35%;
+    padding: 20px;
+    background-color: #f1f3f5;
+  }
+
+  h2 {
+    font-size: 1.6em;
+    margin-bottom: 15px;
+    color: #007bff;
+    font-weight: 600;
+  }
+
+  .section {
+    margin-bottom: 30px;
+  }
+
+  /* Product Details */
+  .product-details {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .product {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .product img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .product-info {
+    flex-grow: 1;
+    margin-left: 15px;
+  }
+
+  .product-name {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .product-price {
+    color: #6c757d;
+    font-size: 0.95em;
+  }
+
+  /* Address Section */
+  .address-group {
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .address-group input[type="radio"] {
+    margin-right: 15px;
+  }
+
+  .address-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #495057;
+  }
+
+  .address-info {
+    font-size: 0.95em;
+    color: #6c757d;
+  }
+
+  .address-info strong {
+    font-weight: 600;
+    color: #007bff;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: #495057;
+  }
+
+  /* Price Section with Border */
+  .price-details {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #495057;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+
+  .total-payable {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #28a745;
+    margin-top: 15px;
+  }
+
+  .total-savings {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .price-summary {
+    text-align: right;
+    margin-top: 15px;
+  }
+
+  .safe-payments {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #6c757d;
+  }
+
+  .safe-payments img {
+    width: 20px;
+    margin-right: 10px;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #888;
+    /* Gray color for the strikethrough */
+    margin-right: 10px;
+    /* Space between the original price and the discounted price */
+  }
+
+  .discounted-price {
+    color: #e74c3c;
+    /* Red color for the discount price */
+    font-weight: bold;
+    /* Bold text to highlight the discount */
+  }
+
+  /* Payment Section */
+  .payment-section {
+    margin-top: 30px;
+    font-size: 1.1em;
+  }
+
+  .payment-method label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .payment-method select {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #495057;
+    margin-bottom: 20px;
+    transition: border 0.3s ease;
+  }
+
+  .payment-method select:hover {
+    border-color: #007bff;
+  }
+
+  .btn-place-order {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-place-order:hover {
+    background-color: #218838;
+  }
+
+  /* Modal Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1050; /* Higher than the navbar */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto; /* Allows scrolling for long content */
+  }
+
+  .modal-content {
+    width: 90%;
+    max-width: 500px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-body {
+    max-height: 80vh; /* Prevent overflow on small screens */
+    overflow-y: auto;
+  }
+
+  .close-btn {
+    text-align: right;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+  }
+  .btn-close:hover {
+    color: #343a40;
+  }
+
+  .modal-body label {
+    display: block;
+    margin: 8px 0 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+
+  .modal-body input[type="text"],
+  .modal-body textarea,
+  .modal-body select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9em;
+  }
+
+  .btn-save {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .btn-save:hover {
+    background-color: #0056b3;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .coupon-section {
+    margin-top: 20px;
+  }
+
+  .coupon-section input {
+    width: 70%;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .coupon-section button {
+    padding: 8px 12px;
+    background-color: #3399cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .success-message {
+    color: green;
+    margin-top: 10px;
+  }
+
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+</style>
+
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body>
+  <div class="containers">
+    <!-- Left Section -->
+    <div class="left-section">
+      <!-- Product Details Section -->
+      <div class="product-details">
+        <h2>1. Product Details</h2>
+        <% if (cartItems && cartItems.length> 0) { %> <%
+        cartItems.forEach(function (item) { %>
+        <div class="product">
+          <img
+            src="/uploads/re-image/<%= item.image ? item.image : 'default-image.jpg' %>"
+            alt="<%= item.productName %>"
+            class="product-image"
+          />
+          <div class="product-info">
+            <p class="product-name"><%= item.productName %></p>
+            <p class="product-price">
+              ₹<%= item.price %> x <%= item.quantity %> = ₹<%= item.totalPrice
+              %>
+            </p>
+          </div>
+        </div>
+        <% }); %> <% } else { %>
+        <p>No products in your cart. Please add some products to proceed.</p>
+        <% } %>
+      </div>
+
+      <!-- Delivery Address Section -->
+      <h2>2. Delivery Address</h2>
+      <div class="section">
+        <% addresses.forEach(function (address) { %>
+        <div class="address-group">
+          <input type="radio" id="<%= address._id %>" name="address"
+          <%=address.isSelected ? 'checked' : '' %> >
+          <label for="address<%= address._id %>">
+            <div>
+              <strong> <%= address.name %> (<%= address.addressType %>) </strong
+              ><br />
+              <span class="address-info">
+                <%= address.city %>, <%= address.state %> - <%= address.pincode
+                %> </span
+              ><br />
+              <span class="phone">Phone: <%= address.phone %></span>
+            </div>
+            <button
+              class="btn-secondary"
+              onclick="openModal('<%= address._id %>', '<%= address.name %>', '<%= address.city %>', '<%= address.landmark %>', '<%= address.state %>', '<%= address.pincode %>', '<%= address.phone %>', '<%= address.altPhone %>', '<%= address.addressType %>')"
+            >
+              Edit Address
+            </button>
+          </label>
+        </div>
+        <% }); %>
+        <button class="btn-primary" onclick="openAddNewAddressModal()">
+          + Add a New Address
+        </button>
+      </div>
+
+      <div class="payment-section">
+        <h2>Payment Method</h2>
+        <div class="payment-method">
+          <label for="payment-method">Choose a Payment Method:</label>
+          <select id="payment-method">
+            <% paymentMethods.forEach(function (method) { %>
+            <option value="<%= method.toLowerCase().replace(/ /g, '-') %>">
+              <%= method %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Place Order Button -->
+        <button class="btn-place-order" onclick="placeOrder()">
+          Place Order
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+      <!-- Price Details Section -->
+      <div class="price-details">
+        <h2>Price Details</h2>
+        <p>Price (<%= cartItems.length %> items): ₹<%= totals.subtotal %></p>
+
+        <!-- Delivery Charge Section -->
+        <% if (totals.deliveryChargeDiscount> 0) { %>
+        <p>
+          Delivery Charge:
+          <span class="original-price">₹65</span>
+          <span class="discounted-price">₹0</span>
+        </p>
+        <% } else { %>
+        <p>Delivery Charge: ₹65</p>
+        <% } %>
+
+        <!-- Total Payable Section -->
+        <p class="total-payable">
+          Total Payable: ₹<span
+            id="totalPayable"
+            data-original-price="<%= finalPrice %>"
+            ><%= finalPrice %></span
+          >
+        </p>
+        <input
+          type="hidden"
+          id="discountedTotal"
+          name="discountedTotal"
+          value=""
+        />
+        <input type="hidden" id="appliedCoupon" name="appliedCoupon" value="" />
+        <!-- Hidden Input to Store Wallet Deducted Amount -->
+
+        <!-- Coupon Section -->
+        <div class="coupon-section">
+          <h3>Apply Coupon</h3>
+          <form
+            method="POST"
+            action="javascript:void(0)"
+            onsubmit="applyCoupon('<%=finalPrice%>')"
+          >
+            <input
+              type="text"
+              id="couponCode"
+              name="couponCode"
+              placeholder="Enter coupon code"
+              required
+              class="coupon-input"
+              value="<%= coupon ? coupon.name : '' %>"
+            />
+            <button type="submit">Apply</button>
+          </form>
+
+          <!-- Display Applied Coupon -->
+          <div id="applied-coupon" style="display: none; margin-top: 10px">
+            <span
+              >Applied Coupon: <strong id="appliedCouponCode"></strong
+            ></span>
+            <button
+              onclick="removeCoupon()"
+              style="
+                margin-left: 10px;
+                color: white;
+                background-color: red;
+                border: none;
+                cursor: pointer;
+              "
+            >
+              Remove
+            </button>
+          </div>
+
+          <!-- Available Coupons -->
+          <div id="available-coupons">
+            <button
+              type="button"
+              class="btn btn-primary mt-2"
+              data-bs-toggle="modal"
+              data-bs-target="#couponModal"
+            >
+              Show Available Coupons
+            </button>
+            <%- include("../../views/partials/user/couponModal.ejs") %>
+          </div>
+        </div>
+
+        <!-- Safe Payments Section -->
+        <div class="safe-payments">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Checkmark_green.svg/1200px-Checkmark_green.svg.png"
+            alt="Check"
+          />
+          Safe and Secure Payments. Easy returns. 100% Authentic products.
+        </div>
+
+        <div class="wallet-balance-section">
+          <input
+            type="checkbox"
+            id="use-wallet"
+            name="useWallet"
+            onclick="toggleWalletBalance()"
+          />
+          <label for="use-wallet"
+            >Use Wallet Balance (<span id="walletBalance"
+              >₹<%= wallet.balance %></span
+            >)</label
+          >
+        </div>
+      </div>
+    </div>
+    <!-- Modal for Address Editing / Adding -->
+    <div class="modal" id="address-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="modal-title">Add Address</span>
+          <button class="btn-close" onclick="closeModal()">X</button>
+        </div>
+        <div class="modal-body">
+          <form id="address-form">
+            <input type="hidden" id="address-id" />
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required />
+            <small class="error-message" id="error-city"></small>
+
+            <label for="landMark">Landmark:</label>
+            <input type="text" id="landMark" name="landMark" required />
+            <small class="error-message" id="error-landMark"></small>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required />
+            <small class="error-message" id="error-state"></small>
+
+            <label for="pincode">Pincode:</label>
+            <input type="text" id="pincode" name="pincode" required />
+            <small class="error-message" id="error-pincode"></small>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" required />
+            <small class="error-message" id="error-phone"></small>
+
+            <label for="alt-phone">Alternate Phone:</label>
+            <input type="text" name="altPhone" id="alt-phone" />
+            <small class="error-message" id="error-altPhone"></small>
+
+            <label for="addressType">Address Type:</label>
+            <input type="text" id="addresstype" name="addressType" required />
+            <small class="error-message" id="error-addresstype"></small>
+
+            <button class="btn-save" type="submit">Save Address</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/user/payment.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+      let selectedAddressId = null;
+
+      // Open Modal for Adding New Address
+      function openAddNewAddressModal() {
+        document.getElementById("modal-title").textContent = "Add Address";
+        document.getElementById("address-form").reset(); // Reset all fields
+        selectedAddressId = null; // Clear the selected address ID
+        document.getElementById("address-modal").style.display = "block";
+      }
+
+      // Open Modal for Editing Address
+      function openModal(
+        addressId,
+        city,
+        landMark,
+        state,
+        pincode,
+        phone,
+        altPhone,
+        addressType
+      ) {
+        document.getElementById("modal-title").textContent = "Edit Address";
+        document.getElementById("city").value = city;
+        document.getElementById("landMark").value = landMark;
+        document.getElementById("state").value = state;
+        document.getElementById("pincode").value = pincode;
+        document.getElementById("phone").value = phone;
+        document.getElementById("alt-phone").value = altPhone;
+        document.getElementById("addresstype").value = addressType;
+        selectedAddressId = addressId;
+        document.getElementById("address-modal").style.display = "block";
+      }
+
+      // Close Modal
+      function closeModal() {
+        document.getElementById("address-modal").style.display = "none";
+      }
+
+      // Form validation
+      function validateForm(
+        city,
+        state,
+        pincode,
+        phone,
+        addressType,
+        landMark
+      ) {
+        // Clear all previous error messages
+        document
+          .querySelectorAll(".error-message")
+          .forEach((el) => (el.textContent = ""));
+
+        city = city.trim();
+        landMark = landMark.trim();
+        state = state.trim();
+        pincode = pincode.trim();
+        phone = phone.trim();
+        addressType = addressType.trim();
+
+        let isValid = true;
+
+        if (!city) {
+          document.getElementById("error-city").textContent =
+            "City is required.";
+          isValid = false;
+        }
+
+        if (!landMark) {
+          document.getElementById("error-landMark").textContent =
+            "Landmark is required.";
+          isValid = false;
+        }
+
+        if (!state) {
+          document.getElementById("error-state").textContent =
+            "State is required.";
+          isValid = false;
+        }
+
+        const pincodeRegex = /^[0-9]{6}$/;
+        if (!pincode.match(pincodeRegex)) {
+          document.getElementById("error-pincode").textContent =
+            "Pincode must be 6 digits.";
+          isValid = false;
+        }
+
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phone.match(phoneRegex)) {
+          document.getElementById("error-phone").textContent =
+            "Phone number must be 10 digits.";
+          isValid = false;
+        }
+
+        if (!addressType) {
+          document.getElementById("error-addresstype").textContent =
+            "Address Type is required.";
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      // Form submission handler
+      document
+        .getElementById("address-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const city = document.getElementById("city").value;
+          const landMark = document.getElementById("landMark").value;
+          const state = document.getElementById("state").value;
+          const pincode = document.getElementById("pincode").value;
+          const phone = document.getElementById("phone").value;
+          const altPhone = document.getElementById("alt-phone").value;
+          const addressType = document.getElementById("addresstype").value;
+
+          if (
+            !validateForm(city, state, pincode, phone, addressType, landMark)
+          ) {
+            return; // Stop submission if validation fails
+          }
+
+          const endpoint = selectedAddressId
+            ? `/edit-address/${selectedAddressId}`
+            : "/add-address";
+          const method = selectedAddressId ? "PUT" : "POST";
+
+          fetch(endpoint, {
+            method: method,
+            body: JSON.stringify({
+              city,
+              landMark,
+              state,
+              pincode,
+              phone,
+              altPhone,
+              addressType,
+            }),
+            headers: { "Content-Type": "application/json" },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message.includes("Address")) {
+                Swal.fire({
+                  title: data.message,
+                  icon: "success",
+                  timer: 2000,
+                  showConfirmButton: false,
+                }).then(() => window.location.reload());
+              }
+              closeModal();
+            })
+            .catch((error) => {
+              Swal.fire({
+                title: "Error",
+                text: "Failed to update address",
+                icon: "error",
+                timer: 3000,
+                showConfirmButton: false,
+              });
+              console.error(error);
+            });
+        });
+      async function applyCoupon(Price) {
+        const couponCode = document.getElementById("couponCode").value.trim();
+
+        if (!couponCode) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Please enter a coupon code.",
+          });
+          return;
+        }
+
+        try {
+          const response = await fetch("/apply-coupon", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ couponCode }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            if (Number(Price) <= Number(result.coupon.minimumPrice)) {
+              Swal.fire({
+                icon: "warning",
+                title: "Coupon Not Applicable",
+                text: "The price is less than the minimum required amount for this coupon.",
+              });
+              return;
+            }
+
+            const Total = Price - result.coupon.offerPrice;
+            document.getElementById("totalPayable").textContent = Total;
+
+            document.getElementById("discountedTotal").value =
+              result.coupon.offerPrice;
+            document.getElementById("appliedCoupon").value = couponCode;
+
+            // Display applied coupon details
+            document.getElementById("appliedCouponCode").textContent =
+              couponCode;
+            document.getElementById("applied-coupon").style.display = "block";
+
+            Swal.fire({
+              icon: "success",
+              title: "Coupon Applied",
+              text: `You saved ₹${result.coupon.offerPrice}! Your new total is ₹${Total}.`,
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Invalid Coupon",
+              text: result.message || "Invalid coupon code.",
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while applying the coupon. Please try again later.",
+          });
+        }
+      }
+
+      function removeCoupon() {
+        // Restore the original total price
+        const originalPrice = document
+          .querySelector("[data-original-price]")
+          .getAttribute("data-original-price");
+        document.getElementById("totalPayable").textContent = originalPrice;
+
+        // Hide the applied coupon section
+        document.getElementById("applied-coupon").style.display = "none";
+
+        // Clear the coupon input field
+        document.getElementById("couponCode").value = "";
+
+        // Show success message using SweetAlert
+        Swal.fire({
+          icon: "success",
+          title: "Coupon Removed",
+          text: "The coupon has been removed successfully.",
+        });
+      }
+    </script>
+  </div>
+</body>
+<%- include("../../views/partials/user/footer") %>

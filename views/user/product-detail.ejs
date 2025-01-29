@@ -1,5 +1,5 @@
 <%- include("../../views/partials/user/header") %>
-
+<link rel="stylesheet" href="/css/product-details.css">
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
@@ -94,20 +94,49 @@
                                         
                                         <!-- Short Description -->
                                         <div class="short-desc mb-3">
-                                            <p class="text-secondary mb-0"><%= product.description %></p>
+                                            <p class=' mb-0' style="color: black;"><%= product.description %></p>
                                         </div>
                                         <hr class="border-color-1">
                                     
                                         <!-- Product Details -->
+
+
+
+                                        <div style="font-family: Arial, sans-serif;">
+                                            <label id="size-label" style="font-size: 16px;">Size: Small</label>
+                                            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                              <% const sizes = ['small', 'medium', 'large', 'xLarge']; %>
+                                              <% const selectedSize = 'Small'; %> <!-- Default selected size -->
+                                              <% const availability = { 
+                                                    small: product.varient?.small || 0, 
+                                                    medium: product.varient?.medium || 0, 
+                                                    large: product.varient?.large || 0, 
+                                                    XLarge: product.varient?.xLarge || 0 
+                                              }; %>
+                                            
+                                              <% sizes.forEach(size => { %>
+                                                <button 
+                                                  class="size-button" 
+                                                  data-size="<%= size %>">
+                                                  <%= size %>
+                                                </button>
+                                              <% }); %>
+                                            </div>
+                                            <p id="availability" style="margin-top: 10px; font-size: 14px; color: green;">
+                                              <span style="color: black; font-size: large;">Stock:</span> 
+                                              <%= availability.Small > 0 ? `${availability.Small} Available` : 'Out of stock' %>
+                                            </p>
+                                          </div>
+                                          
+                                        
+    
+                                          
                                         <div class="product-details mb-3">
                                             <ul class="list-unstyled">
-                                                <li class="mb-2">
-                                                    <strong class="text-dark">Color:</strong> 
-                                                    <span class="text-secondary"><%= product.color %></span>
-                                                </li>
+
                                                 <li>
                                                     <strong class="text-dark">Cloth Type:</strong> 
-                                                    <span class="text-secondary"><%= product.cloth %></span>
+                                                    <span class="text-secondary">Nylon</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -116,13 +145,10 @@
                                         <!-- Additional Information -->
                                         <div class="product_sort_info">
                                             <ul class="list-unstyled">
-                                                <li class="d-flex align-items-center mb-2">
-                                                    <i class="fi-rs-crown text-warning me-2"></i> 
-                                                    <span>1 Year Brand Warranty</span>
-                                                </li>
+                                                
                                                 <li class="d-flex align-items-center mb-2">
                                                     <i class="fi-rs-refresh text-info me-2"></i> 
-                                                    <span>30 Day Return Policy</span>
+                                                    <span>7 Day Return Policy</span>
                                                 </li>
                                                 <li class="d-flex align-items-center">
                                                     <i class="fi-rs-credit-card text-success me-2"></i> 
@@ -136,21 +162,44 @@
 
                                     <div class="detail-extralink mt-4">
                                         <div class="d-flex align-items-center justify-content-start gap-3">
-                                            <!-- Quantity Selector -->
-                                            <div class="detail-qty d-flex align-items-center border rounded px-3 py-2">
-                                                <button class="btn btn-outline-secondary btn-sm qty-down">
-                                                    <i class="fi-rs-angle-small-down">-</i>
-                                                </button>
-                                                <span class="qty-val text-center fw-bold fs-5 mx-3" id="quantity">1</span>
-                                                <button class="btn btn-outline-secondary btn-sm qty-up">
-                                                    <i class="fi-rs-angle-small-up">+</i>
-                                                </button>
-                                            </div>
+                                          
                                     
                                             <!-- Add to Cart Button -->
-                                            <button type="submit" class="btn btn-primary btn-sm px-4">
-                                                Add to Cart
-                                            </button>
+                                            <div class="product-actions mt-4">
+                                                <form action="/addCart" method="POST">
+                                                    <!-- Pass Product Details -->
+                                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                                    <input type="hidden" name="productName"
+                                                        value="<%= product.productName %>">
+                                                    <input type="hidden" name="productImage"
+                                                        value="<%= product.productImage[0] %>">
+                                                    <input type="hidden" name="regularPrice"
+                                                        value="<%= product.regularPrice %>">
+                                                    <input type="hidden" name="salePrice" value="<%= product.salePrice %>">
+                                                    <input type="hidden" name="discount" value="<%= totalOffer || 0 %>">
+    
+                                                    <!-- Quantity Selector -->
+                                                    <label for="quantity" class="form-label">Quantity:</label>
+                                                    <div class="quantity-control d-flex align-items-center">
+                                                        <!-- Decrease Button -->
+                                                        <button type="button" class="btn btn-outline-secondary px-3"
+                                                            id="decrease-btn">-</button>
+    
+                                                        <!-- Quantity Input -->
+                                                        <input type="number" id="quantity" name="quantity" value="1" min="1"
+                                                            max="5" class="form-control text-center mx-2 w-25" readonly />
+    
+                                                        <!-- Increase Button -->
+                                                        <button type="button" class="btn btn-outline-secondary px-3"
+                                                            id="increase-btn">+</button>
+
+                                                            <button type="button" class="btn btn-success  position-relative" id="addToCartBtn">
+                                                                <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                                                              </button>
+                                                    </div>
+    
+                                                    
+                                                </form>
                                         </div>
                                     </div>
                                     
@@ -160,7 +209,7 @@
                                         <li class="d-flex align-items-center mb-3">
                                             <strong class="me-2">Stock Status:</strong>
                                             <span class="badge bg-success text-white">
-                                                <% if (quantity>0) { %>
+                                                <% if (product.varient) { %>
                                                     In Stock
                                                 <% } else { %>
                                                    Out Off Stock
@@ -177,12 +226,6 @@
                                             </div>
                                         </li>
                                     
-                                        <!-- Availability -->
-                                        <li class="d-flex align-items-center">
-                                            <strong class="me-2">Availability:</strong>
-                                            <span class="badge bg-info text-white"><%= quantity %> items</span>
-                                        </li>
-                                    </ul>
                                     
                                 </div>
                             </div>
@@ -191,36 +234,84 @@
                 </div>
             </div>
         </div>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="filter__controls">
+                    <li data-filter=".new-arrivals">YOU MAY ALSO LIKE</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row product__filter">
+            <% for(let i = 0; i < relatedProduct.length; i++) { %>
+                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                    <div class="product-cart-wrap mb-30">
+                        <div class="product-img-action-wrap">
+                            <div class="product-img product-img-zoom">
+                                <a href="/productDetails?id=<%= relatedProduct[i]._id %>">
+                                    <img class="default-img" src="/uploads/re-image/<%= relatedProduct[i].productImage[0] %>" alt="<%= relatedProduct[i].productName %>">
+                                </a>
+                            </div>
+                            <a href="javascript:void(0);" 
+                            class="wishlist-btn" 
+                            onclick="addToWishlist('<%= relatedProduct[i]._id %>')">
+                             <i class="fas fa-heart"></i>
+                         </a>
+                        </div>
+                        <div class="product-content-wrap">
+                            <h6><%= relatedProduct[i].productName %></h6>
+                            <h5>₹ <%= relatedProduct[i].salePrice %></h5>
+                            
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+  </section>
     </section>
 </main>
-
 <style>
-.zoom-container {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: zoom-in;
-    transition: background-size 0.3s ease, background-position 0.3s ease;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-}
+    #addToCartBtn {
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+  
+    #addToCartBtn:hover {
+      background-color: #28a745; /* Darker green on hover */
+      transform: scale(1.05); /* Slightly enlarge the button */
+    }
+  
+    #addToCartBtn:active {
+      transform: scale(0.95); /* Slightly shrink the button on click */
+    }
+  
+    /* Add a ripple effect */
+    #addToCartBtn::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+  
+    #addToCartBtn:focus::after,
+    #addToCartBtn:active::after {
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+    }
+  </style>
 
-.zoom-container:hover {
-    cursor: crosshair;
-}
 
-.thumbnail {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.thumbnail:hover {
-    transform: scale(1.1);
-}
-</style>
 
 <script>
     // Change the main image function
@@ -261,5 +352,210 @@
         zoomContainer.style.backgroundSize = `${scale * 100}%`;
     });
 </script>
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.size-button');
+  const label = document.getElementById('size-label');
+  const availabilityText = document.getElementById('availability');
+
+  // Ensure `sizeAvailability` is parsed correctly
+  const sizeAvailability =<%- JSON.stringify({
+    small: product.varient?.small || 0,
+    medium: product.varient?.medium || 0,
+    large: product.varient?.large || 0,
+    xLarge: product.varient?.xLarge || 0,
+  }) %>;
+
+  // Define `selectedSize` in the broader scope
+  let selectedSize = 'small'; // Default selected size
+
+  // Size button logic
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      selectedSize = button.getAttribute('data-size'); // Update the global `selectedSize`
+
+      // Update label text
+      label.textContent = `Size: ${selectedSize}`;
+
+      // Update availability text
+      const availableCount = sizeAvailability[selectedSize];
+      const availability = availableCount > 0 ? `${availableCount} Available` : 'Out of stock';
+      availabilityText.textContent = `Stock: ${availability}`;
+      availabilityText.style.color = availableCount > 0 ? "green" : "red";
+
+      // Update button styles
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-size') === selectedSize) {
+          btn.style.border = '2px solid black';
+          btn.style.backgroundColor = '#f0f0f0';
+          btn.style.fontWeight = 'bold';
+        } else {
+          btn.style.border = '1px solid gray';
+          btn.style.backgroundColor = '#fff';
+          btn.style.fontWeight = 'normal';
+        }
+      });
+    });
+  });
+
+  // Quantity Selector Logic
+  const quantityInput = document.getElementById('quantity');
+  const increaseBtn = document.getElementById('increase-btn');
+  const decreaseBtn = document.getElementById('decrease-btn');
+
+  if (quantityInput && increaseBtn && decreaseBtn) {
+    increaseBtn.addEventListener('click', () => {
+      let currentValue = parseInt(quantityInput.value);
+      const maxValue = parseInt(quantityInput.max);
+
+      if (currentValue < maxValue) {
+        quantityInput.value = currentValue + 1;
+      }
+    });
+
+    decreaseBtn.addEventListener('click', () => {
+      let currentValue = parseInt(quantityInput.value);
+      const minValue = parseInt(quantityInput.min);
+
+      if (currentValue > minValue) {
+        quantityInput.value = currentValue - 1;
+      }
+    });
+  } else {
+    console.error("Quantity input or buttons not found.");
+  }
+
+  // Add to Cart Logic
+  const addToCartBtn = document.getElementById('addToCartBtn');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', async () => {
+      // Retrieve product details dynamically
+      const productIdElement = document.querySelector('input[name="productId"]');
+      const productNameElement = document.querySelector('input[name="productName"]');
+      const productImageElement = document.querySelector('input[name="productImage"]');
+      const regularPriceElement = document.querySelector('input[name="regularPrice"]');
+      const salePriceElement = document.querySelector('input[name="salePrice"]');
+
+      if (!productIdElement || !productNameElement || !productImageElement || !regularPriceElement || !salePriceElement) {
+        console.error("One or more product detail elements are missing.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to retrieve product details. Please refresh the page and try again.',
+        });
+        return;
+      }
+
+      const productId = productIdElement.value;
+      const quantity = quantityInput ? quantityInput.value : 1; // Default to 1 if quantityInput is missing
+      const productName = productNameElement.value;
+      const productImage = productImageElement.value;
+      const regularPrice = regularPriceElement.value;
+      const salePrice = salePriceElement.value;
+
+      try {
+        // Perform the AJAX request
+        const response = await fetch('/addCart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productId,
+            quantity,
+            productName,
+            productImage,
+            regularPrice,
+            salePrice,
+            size: selectedSize, // Include the selected size
+          }),
+        });
+
+        const result = await response.json();
+
+        // Handle success and error with SweetAlert
+        if (result.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Added to Cart!',
+            text: result.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: result.message,
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+
+        // Handle network or unexpected errors
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to add to cart. Please try again later.',
+        });
+      }
+    });
+  } else {
+    console.error("Add to Cart button not found.");
+  }
+});
+
+async function addToWishlist(productId) {
+    try {
+        const response = await fetch('/addToWishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId }),
+        });
+
+        // Log the raw response
+        const responseText = await response.text();
+        console.log("Raw response text:", responseText);
+
+        // If the response is valid JSON, try to parse it
+        if (responseText) {
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                throw new Error('Failed to parse JSON response');
+            }
+
+            console.log(data);
+            if (data.status) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added!',
+                    text: 'Product added to wishlist',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.message || 'Failed to add to wishlist',
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while adding to the wishlist.',
+        });
+    }
+}
+
+  </script>
+  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%- include("../../views/partials/user/footer") %>

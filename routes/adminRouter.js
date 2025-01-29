@@ -4,8 +4,11 @@ const adminController = require("../controllers/admin/adminController");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const productController = require("../controllers/admin/productController");
+const bannerController=require("../controllers/admin/bannerController")
+const orderController=require("../controllers/admin/orderController")
+const couponController=require("../controllers/admin/couponController")
 const { userAuth, adminAuth } = require("../middlewares/auth");
-const uploads=require("../config/multer")
+const upload = require("../config/multer")
 
 const product = require("../models/productSchema");
 
@@ -31,19 +34,45 @@ router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOf
 router.get("/listCategory", adminAuth, categoryController.getListCategory);
 router.get("/unlistCategory", adminAuth, categoryController.getUnlistCategory);
 router.get("/editCategory", adminAuth, categoryController.getEditCategory);
-router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
+router.post("/editCategory", adminAuth, categoryController.editCategory);
 
 
 
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
-router.post("/addProducts",adminAuth,uploads.array("images", 4),productController.addProducts);
+router.post("/addProducts",adminAuth,upload.array("images", 4),productController.addProducts);
 router.get("/products",adminAuth,productController.getAllProducts)
 router.post("/addProductOffer",adminAuth,productController.addProductOffer)
 router.post("/removeProductOffer",adminAuth,productController.removeProductOffer)
 router.get("/blockProduct",adminAuth,productController.blockProduct)
 router.get("/unblockProduct",adminAuth,productController.unblockProduct)
 router.get("/editProduct",adminAuth,productController.getEditProduct)
-router.post("/editproduct/:id",adminAuth,uploads.array("images",4),productController.editProduct)
+router.post("/editproduct/:id",adminAuth,upload.array("images",4),productController.editProduct)
 router.post("/deleteImage",adminAuth,productController.deleteSingleImage)
+
+
+router.get("/banner",adminAuth,bannerController.getBannerPage)
+router.get("/addBanner",adminAuth,bannerController.getAddBannerPage)
+router.post("/addBanner",adminAuth,upload.single("images"),bannerController.postAddBanner)
+router.get("/deleteBanner",adminAuth,bannerController.deleteBanner)
+
+
+router.get('/orderList',adminAuth,orderController.getOrderlist)
+router.post('/updateOrderStatus',adminAuth,orderController.updateOrderStatus)
+router.get("/orderdetails/:id", adminAuth, orderController.getOrderDetailsForAdmin);
+router.get("/salesReport",adminAuth,orderController.salesReport)
+router.post("/salesReport",adminAuth,orderController.postSalesReport)
+router.post("/sales-report-pdf",orderController.downloadSalesReport);
+
+
+
+
+router.get("/coupon",adminAuth,couponController.getCoupon)
+router.post("/addCoupon",adminAuth,couponController.postCoupon)
+router.delete("/deleteCoupon", adminAuth, couponController.deleteCoupon);
+router.get("/editCoupon/:id",adminAuth,couponController.editCoupon)
+router.post("/updateCoupon/:id",adminAuth,couponController.updateCoupon)
+
+
+
 
 module.exports = router;

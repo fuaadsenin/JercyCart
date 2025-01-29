@@ -1,22 +1,107 @@
 <%- include("../../views/partials/admin/header") %>
+
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 mt-60">
-            <form method="post" action="/admin/editCategory/<%=category._id%>">
-                <div class="d-grid text-end mt-30 col-md-5">
-                    <button class="btn btn-primary" type="submit">Update category</button>
+        <div class="col-md-6 mt-5">
+            <div class="card shadow-sm">
+                <div class="card-header  text-white" style="background-color: aqua;">
+                    <h5 class="mb-0 text-center">Update Category</h5>
                 </div>
-                <div class="mb-4 mt-30">
-                    <label for="product_name" class="form-label">Name</label>
-                    <input type="text" name="categoryName" value="<%=category.name%>" class="form-control border" />
+                <div class="card-body">
+                    <form id="categoryForm">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" name="categoryName" id="name" value="<%=category.name%>" class="form-control border" />
+                            <small id="nameError" class="text-danger"></small>
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" class="form-control border" rows="4"><%=category.description%></textarea>
+                            <small id="descriptionError" class="text-danger"></small>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" id="submitBtn" class="btn btn-primary" categoryId="<%=category._id%>">Update Category</button>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control border"><%=category.description%></textarea>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Event Listener for Submit Button
+    document.getElementById("submitBtn").addEventListener("click", () => {
+        const name = document.getElementById("name").value.trim();
+        const description = document.getElementById("description").value.trim();
+
+        // Clear previous errors
+        document.getElementById("nameError").innerText = "";
+        document.getElementById("descriptionError").innerText = "";
+
+        let isValid = validateForm(name, description);
+
+        if (isValid) {
+            const categoryId = document.getElementById("submitBtn").getAttribute("categoryId");
+            updateCategory(categoryId, name, description);
+        }
+    });
+
+    // Validate Form Inputs
+    function validateForm(name, description) {
+        let isValid = true;
+
+        if (name.length < 3) {
+            document.getElementById("nameError").innerText = "Category name must be at least 3 characters.";
+            isValid = false;
+        }
+
+        if (description.length < 5) {
+            document.getElementById("descriptionError").innerText = "Description must be at least 5 characters.";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Update Category Function
+    async function updateCategory(categoryId, name, description) {
+        try {
+            const response = await fetch(`/admin/editCategory/?id=${categoryId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Category updated successfully.",
+                    showConfirmButton: true,
+                }).then(() => {
+                    window.location.href = '/admin/category';
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: data.error,
+                    showConfirmButton: true,
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something went wrong. Please try again later.",
+                showConfirmButton: true,
+            });
+        }
+    }
+</script>
+
 <%- include("../../views/partials/admin/footer") %>

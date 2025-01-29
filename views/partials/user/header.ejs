@@ -89,8 +89,9 @@
         }
 
         .header {
-            position: relative;
-            z-index: 500;
+            position: sticky;
+            z-index: 900;
+            top: 0;
         }
         /* <style> */
 /* Main Image Styling */
@@ -373,25 +374,70 @@ body {
     background-color: #ffc107;
     border-radius: 3px;
 }
-
-/* Footer tweaks */
 footer {
-    background-color: #333;
-    color: #fff;
-    padding: 30px 0;
-    text-align: center;
+    background-color: #f8f9fa;
+    padding: 40px 20px;
+    border-top: 2px solid #ddd;
+    margin-top: 40px;
+}
+
+footer div {
+    max-width: 960px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+}
+
+footer h3 {
+    color: red;
+    font-weight: bold;
+    text-align: left;
+}
+
+footer h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 2;
+    color: #555;
 }
 
 footer a {
-    color: #fff;
     text-decoration: none;
-    padding: 5px 10px;
+    color: #555;
 }
 
-footer a:hover {
-    background-color: #007bff;
-    border-radius: 3px;
+footer p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
 }
+
+footer .social-icons {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+footer .copyright {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
 
 
 </style>
@@ -415,7 +461,7 @@ footer a:hover {
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="#">Home</a></li>
+                            <li class="active"><a href="/">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
                         </ul>
                     </nav>
@@ -436,7 +482,7 @@ footer a:hover {
                             <a href="/login" class="sign-in-link">Log In</a>
                         <% } %>
                         <a href="/wishlist"><img src="img/icon/heart.png" alt="Wishlist"></a>
-                        <a href="/cart"><img src="img/icon/cart.png" alt="Cart"> <span>0</span></a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt="Cart"> <span></span></a>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,223 @@
-<%- include("../../views/partials/admin/header") %>
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Dashboard </h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .container {
+      margin-top: 20px;
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    canvas {
+      max-width: 100%;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <%- include("../../views/partials/admin/header") %>
+
+  <div class="container">
+    <h1 class="text-center my-4 text-uppercase font-weight-bold">Admin Dashboard</h1>
+
+    <!-- Cards Section -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-white bg-primary">
+          <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <p class="card-text fs-4"><%- totalOrders %></p>
+          </div>
         </div>
-       
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-success">
+          <div class="card-body">
+            <h5 class="card-title">Total Profit</h5>
+            <p class="card-text fs-4">₹ <%- totalProfit %></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-warning">
+          <div class="card-body">
+            <h5 class="card-title">Total Discount</h5>
+            <p class="card-text fs-4">₹ <%- totalDiscount %></p>
+          </div>
+        </div>
+      </div>
     </div>
-</section>
-<%- include("../../views/partials/admin/footer") %>
+
+    <div class="row">
+      <!-- Top 10 Ordered Products -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center">Top 10 Ordered Products</h5>
+            <canvas id="productChart"></canvas>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Top 5 Categories -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center">Top 5 Categories</h5>
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <!-- Recent 5 Months Sales -->
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center">Recent 5 Months Sales</h5>
+            <canvas id="recentSalesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <script>
+      // Colors for consistent styling
+      const colors = {
+        primary: "rgba(75, 192, 192, 0.8)",
+        primaryLight: "rgba(75, 192, 192, 0.3)",
+        accent: "rgba(255, 159, 64, 0.8)",
+        accentLight: "rgba(255, 159, 64, 0.3)",
+        purple: "rgba(153, 102, 255, 0.8)",
+        purpleLight: "rgba(153, 102, 255, 0.3)",
+        red: "rgba(255, 99, 132, 0.8)",
+        redLight: "rgba(255, 99, 132, 0.3)"
+      };
+    
+      // Top 10 Ordered Products Chart
+      const productChartCtx = document.getElementById("productChart").getContext("2d");
+      new Chart(productChartCtx, {
+        type: "bar",
+        data: {
+          labels: <%- JSON.stringify(bestSellingProducts.map(p => p.productName)) %>,
+          datasets: [{
+            label: "Units Sold",
+            data: <%- JSON.stringify(bestSellingProducts.map(p => p.totalSold)) %>,
+            backgroundColor: colors.accentLight,
+            borderColor: colors.accent,
+            borderWidth: 1,
+            borderRadius: 10,
+            hoverBackgroundColor: colors.accent
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (tooltipItem) {
+                  return `Units Sold: ${tooltipItem.raw}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { font: { size: 12 }, color: "#333" },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { font: { size: 12 }, color: "#333" },
+              grid: { color: "#e5e5e5" }
+            }
+          }
+        }
+      });
+    
+      // Top 5 Categories Chart
+      const categoryChartCtx = document.getElementById("categoryChart").getContext("2d");
+      new Chart(categoryChartCtx, {
+        type: "doughnut",
+        data: {
+          labels: <%- JSON.stringify(bestSellingCategories.map(c => c.categoryName)) %>,
+          datasets: [{
+            label: "Units Sold",
+            data: <%- JSON.stringify(bestSellingCategories.map(c => c.totalSold)) %>,
+            backgroundColor: [colors.primary, colors.accent, colors.purple, colors.red, colors.primaryLight],
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom", labels: { font: { size: 14 }, color: "#333" } },
+            tooltip: {
+              callbacks: {
+                label: function (tooltipItem) {
+                  return `${tooltipItem.label}: ${tooltipItem.raw} units`;
+                }
+              }
+            }
+          }
+        }
+      });
+    
+      // Recent 5 Months Sales Chart
+      const recentSalesChartCtx = document.getElementById("recentSalesChart").getContext("2d");
+      new Chart(recentSalesChartCtx, {
+        type: "line",
+        data: {
+          labels: <%- JSON.stringify(recentSalesData.map(r => `Month ${r._id}`)) %>,
+          datasets: [{
+            label: "Sales (₹)",
+            data: <%- JSON.stringify(recentSalesData.map(r => r.totalSales)) %>,
+            backgroundColor: colors.redLight,
+            borderColor: colors.red,
+            borderWidth: 2,
+            tension: 0.4,
+            pointBackgroundColor: colors.red,
+            pointRadius: 5,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (tooltipItem) {
+                  return `₹ ${tooltipItem.raw.toLocaleString()}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { font: { size: 12 }, color: "#333" },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { font: { size: 12 }, color: "#333", callback: value => `₹ ${value}` },
+              grid: { color: "#e5e5e5" }
+            }
+          }
+        }
+      });
+    </script>
+    
+
+  <%- include("../../views/partials/admin/footer") %>
+</body>
+</html>
