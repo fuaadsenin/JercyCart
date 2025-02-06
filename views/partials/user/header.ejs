@@ -340,6 +340,21 @@ body {
 .button-add-to-cart:hover {
     background-color: #0056b3;
 }
+.badge {
+    background-color: rgb(185, 247, 251);
+    color: white;
+    font-size: 12px;
+    border-radius: 50%;
+    padding: 3px 7px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+.wishlist-icon, .cart-icon {
+    position: relative;
+    display: inline-block;
+}
+
 
 /* Hover Effects for Product Extra Links */
 .product-extra-link2 a {
@@ -451,7 +466,7 @@ footer .copyright {
                 <!-- Logo Section -->
                 <div class="col-lg-3 col-md-3">
                     <div class="header__logo">
-                        <a href="#" class="logo-text">
+                        <a class="logo-text">
                             <span class="jercy">Jercy</span>
                             <span class="cart">Cart</span>
                         </a>
@@ -461,7 +476,7 @@ footer .copyright {
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="/">Home</a></li>
+                            <li ><a href="/">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
                         </ul>
                     </nav>
@@ -481,8 +496,19 @@ footer .copyright {
                             <a href="/signup" class="sign-in-link">Sign Up</a>
                             <a href="/login" class="sign-in-link">Log In</a>
                         <% } %>
-                        <a href="/wishlist"><img src="img/icon/heart.png" alt="Wishlist"></a>
-                        <a href="/cart"><img src="img/icon/cart.png" alt="Cart"> <span></span></a>
+                        <a href="/wishlist" class="wishlist-icon">
+                            <img src="img/icon/heart.png" alt="Wishlist">
+                            <% if (wishlistCount > 0) { %>
+                                <span class="badge"><%= wishlistCount %></span>
+                            <% } %>
+                        </a>
+                    
+                        <a href="/cart" class="cart-icon">
+                            <img src="img/icon/cart.png" alt="Cart">
+                            <% if (cartCount > 0) { %>
+                                <span class="badge"><%= cartCount %></span>
+                            <% } %>
+                        </a>
                     </div>
                 </div>
             </div>

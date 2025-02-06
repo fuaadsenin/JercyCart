@@ -85,8 +85,11 @@ const orderSchema = new Schema(
       returnReason:{
         type:String
       },
+      paymentMethod:{
+        type:String
+      }
     },
-    { timestamps: true } // Automatically adds `createdAt` and `updatedAt`
+    { timestamps: true } 
   );
   
   const Order = mongoose.model("Order", orderSchema);

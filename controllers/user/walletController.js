@@ -1,5 +1,6 @@
 const Wallet = require("../../models/walletSchema");
 const User = require("../../models/userSchema");
+const Cart=require("../../models/cartSchema")
 
 const getWallet = async (req, res) => {
   try {
@@ -13,6 +14,10 @@ const getWallet = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
+    wishlistCount=user.wishlist.length
+    
+    const cart=await Cart.findOne({userId:userId})
+    cartCount = cart ? cart.items.length : 0;
 
     let wallet = await Wallet.findOne({ user: userId }).lean();
     if (!wallet) {
@@ -23,12 +28,18 @@ const getWallet = async (req, res) => {
       });
     }
 
+    // Sort transactions by date (most recent first)
+    wallet.transactions = wallet.transactions.sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
+
     res.render("wallet", { user, wallet });
   } catch (error) {
     console.error("Error fetching wallet:", error);
     res.status(500).send("Server error. Please try again later.");
   }
 };
+
 
 const addAmount = async (req, res) => {
   try {

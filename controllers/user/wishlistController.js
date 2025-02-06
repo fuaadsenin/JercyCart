@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
-const product = require("../../models/productSchema");
+const Wishlist = require("../../models/wishlistSchema");
+const Cart = require("../../models/cartSchema");
 
 const loadWishlist = async (req, res) => {
   try {
@@ -18,16 +19,23 @@ const loadWishlist = async (req, res) => {
       return res.redirect("/login");
     }
 
+    if (user) {
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
+
     const wishlist = user.wishlist || [];
+    wishlistCount = wishlist.length;
 
     const products = await Product.find({ _id: { $in: wishlist } }).populate(
       "category"
     );
 
-   
     res.render("wishlist", {
       user,
       wishlist: products,
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     console.error("Error in loadWishlist:", error);

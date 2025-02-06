@@ -103,7 +103,14 @@
   }
 </style>
 
-<div class="container my-5">
+<div class="container ">
+  <div class="container">
+    <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a><span></span>
+        <a href="/shop" rel="nofollow">Shop</a> 
+        <span></span> Cart
+    </div>
+</div>
   <h2 class="text-center mb-4">Your Shopping Cart</h2>
 
   <div class="row">
@@ -112,9 +119,12 @@
       i++) { %>
       <!-- Cart Item -->
       <div
-        class="cart-item d-flex justify-content-between"
-        id="cart-item-<%= cart[i].productId._id %>"
-      >
+      class="cart-item d-flex justify-content-between"
+      id="cart-item-<%= cart[i].productId._id %>"
+      data-product-id="<%= cart[i].productId._id %>"
+      data-size="<%= cart[i].size %>"
+    >
+    
         <div class="d-flex">
           <img
             src="/uploads/re-image/<%= cart[i].productId.productImage[0] %>"
@@ -198,9 +208,14 @@
               >₹<%= totalPrice %></span
             >
           </div>
-          <button class="btn checkout-btn" onclick="proceedToCheckout()">
-            Proceed to Checkout
-          </button>
+          <button
+  class="btn checkout-btn"
+  onclick="proceedToCheckout()"
+  <%= totalItems === 0 ? "disabled" : "" %>
+>
+  Proceed to Checkout
+</button>
+
         </div>
       </div>
     </div>
@@ -215,77 +230,79 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".cart-item").forEach((item) => {
-      const productId = item.id.split("-")[2];
+  document.querySelectorAll(".cart-item").forEach((item) => {
+    const productId = item.dataset.productId; // Get Product ID
+    const size = item.dataset.size; // Get Size from dataset
 
-      // Increase Quantity
-      item.querySelector("#increase-btn").addEventListener("click", () => {
-        const quantityInput = item.querySelector("#quantity");
-        let currentValue = parseInt(quantityInput.value);
-        const maxValue = parseInt(quantityInput.max);
+    // Increase Quantity
+    item.querySelector("#increase-btn").addEventListener("click", () => {
+      const quantityInput = item.querySelector("#quantity");
+      let currentValue = parseInt(quantityInput.value);
+      const maxValue = parseInt(quantityInput.max);
 
-        if (currentValue < maxValue) {
-          const newQuantity = currentValue + 1;
-          quantityInput.value = newQuantity;
-          updateQuantity(productId, newQuantity);
-        }
-      });
+      if (currentValue < maxValue) {
+        const newQuantity = currentValue + 1;
+        quantityInput.value = newQuantity;
+        updateQuantity(productId, size, newQuantity);
+      }
+    });
 
-      // Decrease Quantity
-      item.querySelector("#decrease-btn").addEventListener("click", () => {
-        const quantityInput = item.querySelector("#quantity");
-        let currentValue = parseInt(quantityInput.value);
-        const minValue = parseInt(quantityInput.min);
+    // Decrease Quantity
+    item.querySelector("#decrease-btn").addEventListener("click", () => {
+      const quantityInput = item.querySelector("#quantity");
+      let currentValue = parseInt(quantityInput.value);
+      const minValue = parseInt(quantityInput.min);
 
-        if (currentValue > minValue) {
-          const newQuantity = currentValue - 1;
-          quantityInput.value = newQuantity;
-          updateQuantity(productId, newQuantity);
-        }
-      });
+      if (currentValue > minValue) {
+        const newQuantity = currentValue - 1;
+        quantityInput.value = newQuantity;
+        updateQuantity(productId, size, newQuantity);
+      }
     });
   });
+});
 
-  async function updateQuantity(productId, newQuantity) {
-    try {
-      // Send the new quantity to the server
-      const response = await fetch("/updateQuantity", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId, quantity: newQuantity }),
-      });
+async function updateQuantity(productId, size, newQuantity) {
+  try {
+    // Send the new quantity and size to the server
+    const response = await fetch("/updateQuantity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId, size, quantity: newQuantity }),
+    });
 
-      if (response.ok) {
-        const result = await response.json();
+    if (response.ok) {
+      const result = await response.json();
 
-        // Update the total price and quantity dynamically in the frontend
-        document.getElementById(
-          `total-price-${productId}`
-        ).textContent = `₹${result.itemTotalPrice}`;
-        document.getElementById(
-          "total-price-summary"
-        ).textContent = `₹${result.totalPrice}`;
-        document.querySelector(
-          ".summary-section .d-flex span:last-child"
-        ).textContent = result.totalItems;
-      } else {
-        const error = await response.json();
-        Swal.fire({
-          icon: "error",
-          title: "Quantity Limit Reached",
-          text: error.message || "You cannot add more than available stock.",
-        });
-      }
-    } catch (error) {
+      // Update the total price and quantity dynamically in the frontend
+      document.getElementById(
+        `total-price-${productId}`
+      ).textContent = `₹${result.itemTotalPrice}`;
+      document.getElementById(
+        "total-price-summary"
+      ).textContent = `₹${result.totalPrice}`;
+      document.querySelector(
+        ".summary-section .d-flex span:last-child"
+      ).textContent = result.totalItems;
+    } else {
+      const error = await response.json();
       Swal.fire({
         icon: "error",
-        title: "An error occurred",
-        text: "Please check your connection and try again.",
+        title: "Quantity Limit Reached",
+        text: error.message || "You cannot add more than available stock.",
       });
     }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "An error occurred",
+      text: "Please check your connection and try again.",
+    });
   }
+}
+
 
   async function removeItem(productId, size) {
     console.log("Removing item with productId:", productId, "and size:", size); // Debugging log
@@ -326,8 +343,22 @@
   }
 
   function proceedToCheckout() {
-    window.location.href = "/check-out";
+  const totalItems = parseInt(document.querySelector(".summary-section .d-flex span:last-child").textContent);
+
+  if (totalItems === 0) {
+    Swal.fire({
+      icon: "info",
+      title: "Cart is empty",
+      text: "Please add items to your cart before proceeding to checkout.",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+    return;
   }
+
+  window.location.href = "/check-out";
+}
+
 </script>
 
 <%- include("../../views/partials/user/footer") %>

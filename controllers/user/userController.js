@@ -3,6 +3,8 @@ const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Banner = require("../../models/BannerSchema");
 const Wallet = require("../../models/walletSchema");
+const Wishlist=require("../../models/wishlistSchema")
+const Cart=require("../../models/cartSchema")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const category = require("../../models/categorySchema");
@@ -26,6 +28,19 @@ const loadHomepage = async (req, res) => {
     });
     const user = req.session.user || req.session.passport?.user;
 
+    let wishlistCount = 0;
+    let cartCount = 0;
+
+    if (user) {
+      
+     
+
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+     
+      
+    }
+
     // Fetch user from the session
     const categories = await Category.find({ isListed: true });
     let productData = await Product.find({
@@ -44,17 +59,23 @@ const loadHomepage = async (req, res) => {
 
     if (user) {
       const userData = await User.findById(user);
-      // Optional: Fetch full user details
+      wishlistCount=userData.wishlist.length
+      
+      
       res.render("home", {
         user: userData,
         products: productData,
         banner: findBanner || [],
+        wishlistCount,
+        cartCount
       }); // Pass user details to EJS
     } else {
       res.render("home", {
         user: null,
         products: productData,
         banner: findBanner || [],
+        wishlistCount,
+        cartCount
       }); // No user logged in
     }
   } catch (error) {
@@ -322,6 +343,16 @@ const resendOtp = async (req, res) => {
 const loadShoppingPage = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport?.user;
+
+    
+    let cartCount = 0;
+
+    if (user) {
+      
+
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
     if (!user) {
       return res.redirect("/login");
     }
@@ -330,7 +361,8 @@ const loadShoppingPage = async (req, res) => {
     if (!userData) {
       return res.redirect("/login");
     }
-
+    wishlistCount=userData.wishlist.length
+    
     const categories = await Category.find({ isListed: true });
     const sortOption = req.query.sort || "";
     const search = req.query.search || ""; // Adjust search handling here
@@ -365,6 +397,8 @@ const loadShoppingPage = async (req, res) => {
       sortOption,
       selectedCategory: categoryId,
       search,
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     console.error("Error loading shop page:", error.message);
@@ -375,6 +409,15 @@ const loadShoppingPage = async (req, res) => {
 const filterProduct = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport?.user;
+
+    let cartCount = 0;
+
+    if (user) {
+      
+
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
     const category = req.query.category || null;
     const search = req.body.query || null;
     const sortOption = req.query.sort || null;
@@ -409,7 +452,7 @@ const filterProduct = async (req, res) => {
 
     const categories = await Category.find({ isListed: true }).lean();
     const userData = user ? await User.findOne({ _id: user }) : null;
-
+    wishlistCount=userData.wishlist.length
     res.render("shop", {
       user: userData,
       products,
@@ -418,6 +461,8 @@ const filterProduct = async (req, res) => {
       sortOption,
       query,
       search: search || "", // Pass the search value
+      wishlistCount,
+      cartCount
     });
   } catch (error) {
     console.error("Error filtering products:", error);
@@ -428,7 +473,18 @@ const filterProduct = async (req, res) => {
 const filterByPrice = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport?.user;
+
+    
+    let cartCount = 0;
+
+    if (user) {
+      
+
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
     const userData = await User.findOne({ _id: user });
+    wishlistCount=userData.wishlist.length
     const categories = await Category.find({ isListed: true }).lean();
 
     const minPrice = parseFloat(req.query.gt) || 0;
@@ -472,6 +528,8 @@ const filterByPrice = async (req, res) => {
       selectedCategory: req.query.category || "",
       sortOption: req.query.sort || "",
       search: req.query.search || "", // Pass search if needed
+      wishlistCount,
+      cartCount
     });
   } catch (error) {
     console.log(error);
@@ -482,7 +540,19 @@ const filterByPrice = async (req, res) => {
 const searchProducts = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport?.user;
+
+    
+    let cartCount = 0;
+
+    if (user) {
+      
+
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
     const userData = await User.findOne({ _id: user });
+    wishlistCount=userData.wishlist.length
+
     const search = req.body.query;
     const category = req.body.category || req.query.category || null;
 
@@ -529,6 +599,8 @@ const searchProducts = async (req, res) => {
         search,
         selectedCategory: category || null,
         message: "No products found",
+        wishlistCount,
+        cartCount
       });
     }
 
@@ -550,6 +622,8 @@ const searchProducts = async (req, res) => {
       sortOption: req.query.sort,
       search,
       selectedCategory: category,
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     console.log("Error:", error);

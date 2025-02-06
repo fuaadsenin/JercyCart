@@ -54,7 +54,6 @@
                 <th><b>Sale Price</b></th>
                 <th><b>Offer Price</b></th>
                 <th><b>Offer </b></th>
-                <th><b>Quantity</b></th>
                 <th><b>Action</b></th>
                 <th><b>Edit</b></th>
             </tr>
@@ -99,9 +98,6 @@
                         <button class="btn btn-info" onclick="removeOffer('<%= data[i]._id %>')">Remove Offer</button>
                     <% } %>
                 </td>
-                
-                <!-- Quantity -->
-                <td><%= data[i].quantity %></td>
                 
                 <!-- Action Section (Block/Unblock) -->
                 <td>

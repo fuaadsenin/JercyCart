@@ -390,7 +390,15 @@ nav {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body>
+  <div class="container">
+    <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a><span></span>
+        <a href="/shop" rel="nofollow">Shop</a><span></span>
+        <a href="/cart" rel="nofollow">Cart</a><span></span>
+        <span></span> Checkout
+    </div>
   <div class="containers">
+    
     <!-- Left Section -->
     <div class="left-section">
       <!-- Product Details Section -->
@@ -436,7 +444,7 @@ nav {
             </div>
             <button
               class="btn-secondary"
-              onclick="openModal('<%= address._id %>', '<%= address.name %>', '<%= address.city %>', '<%= address.landmark %>', '<%= address.state %>', '<%= address.pincode %>', '<%= address.phone %>', '<%= address.altPhone %>', '<%= address.addressType %>')"
+              onclick="openModal('<%= address._id %>','<%= address.city %>','<%= address.landMark %>', '<%= address.state %>', '<%= address.pincode %>', '<%= address.phone %>', '<%= address.altPhone %>', '<%= address.addressType %>')"
             >
               Edit Address
             </button>
@@ -558,20 +566,13 @@ nav {
 
         <!-- Safe Payments Section -->
         <div class="safe-payments">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Checkmark_green.svg/1200px-Checkmark_green.svg.png"
-            alt="Check"
-          />
+          <i class="fas fa-check" style="font-size: 30px; color: green;"></i>
           Safe and Secure Payments. Easy returns. 100% Authentic products.
         </div>
+        
+        
 
-        <div class="wallet-balance-section">
-          <input
-            type="checkbox"
-            id="use-wallet"
-            name="useWallet"
-            onclick="toggleWalletBalance()"
-          />
+       
           <label for="use-wallet"
             >Use Wallet Balance (<span id="walletBalance"
               >₹<%= wallet.balance %></span
@@ -585,7 +586,7 @@ nav {
       <div class="modal-content">
         <div class="modal-header">
           <span id="modal-title">Add Address</span>
-          <button class="btn-close" onclick="closeModal()">X</button>
+          <button class="btn-close" onclick="closeModal()"></button>
         </div>
         <div class="modal-body">
           <form id="address-form">
@@ -642,16 +643,19 @@ nav {
       }
 
       // Open Modal for Editing Address
-      function openModal(
-        addressId,
-        city,
-        landMark,
-        state,
-        pincode,
-        phone,
-        altPhone,
-        addressType
-      ) {
+      // Call openModal with correct address details
+ function openModal(addressId, city, landMark, state, pincode, phone, altPhone, addressType)
+
+      {
+        console.log( "addressId:",addressId,
+        "city:",city,
+       "landmark:", landMark,
+       "satee:", state,
+      "pincode:",  pincode,
+       "phone:", phone,
+       "altPhone:", altPhone,
+       "addressType:", addressType);
+        
         document.getElementById("modal-title").textContent = "Edit Address";
         document.getElementById("city").value = city;
         document.getElementById("landMark").value = landMark;

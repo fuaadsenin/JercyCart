@@ -60,6 +60,11 @@ const productSchema = new Schema(
       required: true,
       default: "Available",
     },
+    averageRating:{
+      type:Number,
+      min:[0],
+      max:[5]
+    },
   },
   { timestamps: true }
 );

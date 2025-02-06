@@ -1,5 +1,23 @@
 <%- include("../../views/partials/user/header") %>
 <link rel="stylesheet" href="/css/product-details.css">
+<style>
+      .wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(215, 215, 215, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    color: white; 
+    font-size: 18px;
+    z-index: 10;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  }
+  .wishlist-btn.wishlist-active {
+  color: red; /* Active color when in wishlist */
+}
+
+</style>
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
@@ -48,29 +66,7 @@
                                 <div class="detail-info">
                                     <h2 class="title-detail"><%= product.productName %></h2>
 
-                                    <div class="product-detail-rating">
-                                        <div class="product-rate-cover d-flex align-items-center justify-content-end">
-                                            <!-- Star Rating -->
-                                            <div class="product-rate d-inline-block position-relative">
-                                                <div class="bg-light rounded-pill p-2">
-                                                    <!-- Stars -->
-                                                    <div class="text-warning">
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star"></i>
-                                                        <i class="fas fa-star-half-alt"></i>
-                                                    </div>
-                                                    <!-- Progress Bar -->
-                                                    <div class="progress mt-2" style="height: 6px; width: 120px;">
-                                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Reviews -->
-                                            <span class="font-small ml-3 text-muted"> (25 reviews)</span>
-                                        </div>
-                                    </div>
+                                  
                                     
                                     <div class="product-price-cover mt-3">
                                         <div class="product-price d-flex justify-content-between align-items-center p-4 bg-light rounded shadow-sm">
@@ -80,7 +76,7 @@
                                                 <h5 class="text-muted text-decoration-line-through me-4 mb-0" style="padding: 0px 20px ;text-decoration: line-through;">₹<%= product.regularPrice %></h5>
                                             </div>
                                             <!-- Offer Badge Section -->
-                                            <span class="badge bg-success px-4 py-2 text-white fs-6">
+                                            <span class=" bg-success px-4 py-2 text-white fs-6">
                                                 <% if (!totalOffer) { %>
                                                     No Offers
                                                 <% } else { %>
@@ -124,7 +120,7 @@
                                             </div>
                                             <p id="availability" style="margin-top: 10px; font-size: 14px; color: green;">
                                               <span style="color: black; font-size: large;">Stock:</span> 
-                                              <%= availability.Small > 0 ? `${availability.Small} Available` : 'Out of stock' %>
+                                              <%= availability.small > 0 ? `${availability.small} Available` : 'Out of stock' %>
                                             </p>
                                           </div>
                                           
@@ -208,7 +204,7 @@
                                         <!-- Stock Status -->
                                         <li class="d-flex align-items-center mb-3">
                                             <strong class="me-2">Stock Status:</strong>
-                                            <span class="badge bg-success text-white">
+                                            <span class=" bg-success text-white">
                                                 <% if (product.varient) { %>
                                                     In Stock
                                                 <% } else { %>
@@ -222,7 +218,7 @@
                                         <li class="d-flex align-items-center mb-3">
                                             <strong class="me-2">Tags:</strong>
                                             <div class="d-inline">
-                                                <a href="#" class="badge bg-primary text-white" rel="tag"><%= category.name %></a>
+                                                <a href="#" class=" bg-primary text-white" rel="tag"><%= category.name %></a>
                                             </div>
                                         </li>
                                     
@@ -254,11 +250,14 @@
                                     <img class="default-img" src="/uploads/re-image/<%= relatedProduct[i].productImage[0] %>" alt="<%= relatedProduct[i].productName %>">
                                 </a>
                             </div>
-                            <a href="javascript:void(0);" 
-                            class="wishlist-btn" 
-                            onclick="addToWishlist('<%= relatedProduct[i]._id %>')">
-                             <i class="fas fa-heart"></i>
-                         </a>
+                            <a
+                            href="javascript:void(0);"
+                            class="wishlist-btn <%= user && user.wishlist && user.wishlist.includes(relatedProduct[i]._id.toString()) ? 'wishlist-active' : '' %>"
+                            onclick="<%= user ? `toggleWishlist('${relatedProduct[i]._id}')` : 'alert(\'Please log in to add to wishlist\')' %>"
+                            data-product-id="<%= relatedProduct[i]._id %>"
+                          >
+                            <i class="fas fa-heart"></i>
+                          </a>
                         </div>
                         <div class="product-content-wrap">
                             <h6><%= relatedProduct[i].productName %></h6>
@@ -506,54 +505,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-async function addToWishlist(productId) {
-    try {
-        const response = await fetch('/addToWishlist', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ productId }),
-        });
+async function toggleWishlist(productId) {
+  const button = document.querySelector(`[data-product-id="${productId}"]`);
+  const isActive = button.classList.contains("wishlist-active");
 
-        // Log the raw response
-        const responseText = await response.text();
-        console.log("Raw response text:", responseText);
+  try {
+    const response = await fetch(isActive ? "/removeFromWishlist" : "/addToWishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productId }),
+    });
 
-        // If the response is valid JSON, try to parse it
-        if (responseText) {
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                throw new Error('Failed to parse JSON response');
-            }
-
-            console.log(data);
-            if (data.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Added!',
-                    text: 'Product added to wishlist',
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: data.message || 'Failed to add to wishlist',
-                });
-            }
-        }
-    } catch (error) {
-        console.error('Error adding to wishlist:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while adding to the wishlist.',
-        });
+    const data = await response.json();
+    if (data.status) {
+      button.classList.toggle("wishlist-active", !isActive); // Add or remove 'wishlist-active'
+      Swal.fire({
+        icon: "success",
+        title: isActive ? "Removed!" : "Added!",
+        text: isActive
+          ? "Product removed from wishlist"
+          : "Product added to wishlist",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: data.message || "Action failed",
+      });
     }
+  } catch (error) {
+    console.error("Error toggling wishlist:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while toggling the wishlist.",
+    });
+  }
 }
-
   </script>
   
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

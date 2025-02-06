@@ -5,6 +5,8 @@ const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
 const Wallet = require("../../models/walletSchema");
 const mongoose = require("mongoose");
+const wishlist = require("../../models/wishlistSchema");
+const Cart=require("../../models/cartSchema")
 
 const getOrdersPage = async (req, res) => {
   // Retrieve the logged-in user's ID from the session
@@ -17,6 +19,10 @@ const getOrdersPage = async (req, res) => {
   try {
     // Fetch the logged-in user's details
     const user = await User.findById(userId);
+    wishlistCount=user.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
 
     if (!user) {
       return res.redirect("/login"); // Redirect if the user record does not exist
@@ -39,7 +45,9 @@ const getOrdersPage = async (req, res) => {
     res.render("my-order", {
       orders, // Pass the fetched orders
       user, // Pass the user details
-      message: orders.length === 0 ? "No orders found." : null, // Handle empty orders gracefully
+      message: orders.length === 0 ? "No orders found." : null, 
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     console.error("Error fetching orders:", error.message);
@@ -82,7 +90,7 @@ const cancelOrder = async (req, res) => {
       console.log("pay:", order.paymentId);
 
       // Refund to wallet if no payment ID
-      if (order.paymentId !== null) {
+      if (order.paymentId !== null||order.paymentMethod==="wallet") {
         let wallet = await Wallet.findOne({ user: order.userId });
 
         if (!wallet) {
@@ -161,17 +169,7 @@ const removeProduct = async (req, res) => {
       await product.save();
     }
 
-    // Calculate refund
-    // const refundAmount = removedItem.quantity * removedItem.product.salePrice;
-    // if (refundAmount > 0) {
-    //     await walletController.updateWallet(
-    //         refundAmount,
-    //         "credit",
-    //         order.userId,
-    //         "Return",
-    //         order.orderId
-    //     );
-    // }
+  
 
     // Remove product from order
     order.orderedItems.splice(productIndex, 1);
@@ -259,11 +257,7 @@ const returnOrder = async (req, res) => {
   const { reason } = req.body;
 
   try {
-    
-    
     const order = await Order.findById(orderId);
-    
-    
 
     if (!order) {
       return res
@@ -278,13 +272,11 @@ const returnOrder = async (req, res) => {
       });
     }
 
-    order.returnReason=reason
+    order.returnReason = reason;
 
     // Update the order status
     order.status = "Returning";
     await order.save();
-    
-    
 
     res.status(200).json({
       success: true,
@@ -478,7 +470,6 @@ const invoiceDownload = async (req, res) => {
       </html>
     `;
 
-    // Generate the PDF from the HTML content
     pdf.create(invoiceHTML, { format: "A4" }).toBuffer((err, pdfBuffer) => {
       if (err) {
         console.error("Error generating PDF:", err);

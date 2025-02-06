@@ -117,6 +117,7 @@ router.post("/wallet",userAuth,walletController.addAmount)
 
 
 router.get("/about",userAuth,profileController.aboutUs)
+router.get("/faq",userAuth,profileController.faq)
 
 
 

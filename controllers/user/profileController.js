@@ -4,8 +4,9 @@ const Order = require("../../models/orderSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
-
+const Cart = require("../../models/cartSchema");
 const session = require("express-session");
+const Wishlist = require("../../models/wishlistSchema");
 require("dotenv").config();
 function generateOtp() {
   const digits = "1234567890";
@@ -192,6 +193,14 @@ const userProfile = async (req, res) => {
     const userId = req.session.user || req.session.passport?.user;
     const puser = req.session.passport?.user;
     const userData = await User.findById(userId);
+    wishlistCount = userData.wishlist.length;
+    let cartCount = 0;
+
+    if (userId) {
+      const cart = await Cart.findOne({ userId: userId });
+      cartCount = cart ? cart.items.length : 0;
+    }
+
     const addressData = await Address.findOne({ userId: userId });
     const orders = await Order.find({ userId })
       .populate({
@@ -204,6 +213,8 @@ const userProfile = async (req, res) => {
       userAddress: addressData,
       orders,
       puser,
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     console.error("Error for retrive profile data", error);
@@ -214,12 +225,18 @@ const userProfile = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const user = req.session.user || req.session.passport?.user;
+    const userData=await User.findOne({_id:user._id})
+    wishlistCount=userData.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
+
 
     if (!user) {
       return res.redirect("/login"); // Redirect to login if the user is not logged in
     }
 
-    res.render("profile-changePassword", { user });
+    res.render("profile-changePassword", { user,wishlistCount,cartCount });
   } catch (error) {
     console.error("Error in changePassword:", error);
     res.redirect("/pageNotFound");
@@ -285,13 +302,24 @@ const getAddress = async (req, res) => {
     if (!user) {
       return res.redirect("/login"); // Redirect to login if no user session
     }
+    if (user) {
+      const cart = await Cart.findOne({ userId: user });
+      cartCount = cart ? cart.items.length : 0;
+    }
+    const userData=await User.findOne({_id:user._id})
+    wishlistCount=userData.wishlist.length
+
+   
+
 
     // Fetch user's addresses from the database
     const userAddress = await Address.findOne({ userId: user._id });
 
     res.render("my-address", {
       user,
-      userAddress, // Pass the user's address to the view
+      userAddress,
+      wishlistCount,
+      cartCount // Pass the user's address to the view
     });
   } catch (error) {
     console.error("Error fetching user address:", error);
@@ -383,6 +411,11 @@ const editAddress = async (req, res) => {
   try {
     const addressId = req.query.id; // Extracting id from query
     const user = req.session.user || req.session.passport?.user;
+    const userData=await User.findOne({_id:user._id})
+    wishlistCount=userData.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
 
     // Validate addressId
     if (!addressId || !mongoose.Types.ObjectId.isValid(addressId)) {
@@ -411,7 +444,7 @@ const editAddress = async (req, res) => {
     }
 
     // Render the edit address page
-    res.render("edit-address", { address: addressData, user: user });
+    res.render("edit-address", { address: addressData, user: user ,wishlistCount,cartCount});
   } catch (error) {
     console.error("Error in editAddress:", error);
     res.redirect("/pageNotFound");
@@ -464,8 +497,14 @@ const getEditUser = async (req, res) => {
   try {
     const userId = req.session.user || req.session.passport?.user;
     const userData = await User.findOne({ _id: userId });
+    wishlistCount=userData.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
     res.render("edit-user", {
       user: userData,
+      wishlistCount,
+      cartCount,
     });
   } catch (error) {
     res.redirect("/pageNotFound");
@@ -511,27 +550,55 @@ const postEditUser = async (req, res) => {
   }
 };
 
-
-const aboutUs=async(req,res)=>{
+const aboutUs = async (req, res) => {
   try {
-    const user=req.session.user||req.passport?.user
+    const user = req.session.user || req.passport?.user;
 
     if (!user) {
       return res.redirect("/login");
     }
 
     const userData = await User.findOne({ _id: user });
+
+   
+    wishlistCount=userData.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
     if (!userData) {
       return res.redirect("/login");
     }
 
-     res.render("aboutUs",{user:userData})
-    
+    res.render("aboutUs", { user: userData,cartCount,wishlistCount });
   } catch (error) {
-    console.error( "Error fetching aboutpage",error.message);
+    console.error("Error fetching aboutpage", error.message);
     res.redirect("/pageNotFound");
   }
-}
+};
+const faq = async (req, res) => {
+  try {
+    const user = req.session.user || req.passport?.user;
+
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    const userData = await User.findOne({ _id: user });
+    wishlistCount=userData.wishlist.length
+
+    const cart=await Cart.findOne({userId:user._id})
+    cartCount = cart ? cart.items.length : 0;
+
+    if (!userData) {
+      return res.redirect("/login");
+    }
+
+    res.render("faq", { user: userData,wishlistCount ,cartCount});
+  } catch (error) {
+    console.error("Error fetching faqpage", error.message);
+    res.redirect("/pageNotFound");
+  }
+};
 
 module.exports = {
   getForgotPassPage,
@@ -551,5 +618,6 @@ module.exports = {
   getAddress,
   getEditUser,
   postEditUser,
-  aboutUs
+  aboutUs,
+  faq,
 };
