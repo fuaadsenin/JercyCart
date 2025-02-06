@@ -271,7 +271,7 @@ const changePasswordPost = async (req, res) => {
     }
 
     // Ensure User schema has a method to verify password
-    const bcrypt = require("bcrypt"); // Use bcrypt for password comparison
+    const bcrypt = require("bcryptjs"); // Use bcrypt for password comparison
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
