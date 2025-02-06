@@ -50,7 +50,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRouter);
 app.use("/", userRouter);
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3000;
+
 
 app.listen(PORT, (err) => {
   if (err) {
