@@ -80,7 +80,7 @@ async function placeOrder() {
         description: "Test Transaction",
         order_id: data.orderId, // Razorpay Order ID
         redirect: true,
-        callback_url: "http://localhost:3002/verify-payment",
+        callback_url: "http://jercycart.shop/verify-payment",
         prefill: {
           name: details.userName,
           email: details.email,
