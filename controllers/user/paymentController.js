@@ -11,12 +11,16 @@ const razorpayInstance = new Razorpay({
 
 const createPayment = async (totalAmount) => {
   try {
+    console.log("Creating Razorpay order...");
+
     const order = await razorpayInstance.orders.create({
       amount: totalAmount * 100,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1,
     });
+    console.log("Razorpay Order Created:", order);
+    
 
     return order;
   } catch (error) {
@@ -27,6 +31,8 @@ const createPayment = async (totalAmount) => {
 const verifyPayment = async (req, res) => {
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
     req.body;
+    console.log("Received payment verification request"); // Debug log
+    console.log("Request Body:", req.body); 
   
 
   const secret = process.env.RAZORPAY_KEY_SECRET;
@@ -38,7 +44,8 @@ const verifyPayment = async (req, res) => {
     .digest("hex");
 
   if (generatedSignature === razorpay_signature) {
-   
+    console.log("✅ Signature verification successful!");
+
     
     await Order.updateOne(
       { paymentId: razorpay_order_id },

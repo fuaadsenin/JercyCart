@@ -268,7 +268,6 @@ const placeOrder = async (req, res) => {
       await wallet.save();
     }
 
-    console.log(wallet.balance);
 
     if (paymentMethod === "wallet") {
       if (!wallet || wallet.balance < finalAmount) {
@@ -362,7 +361,10 @@ const placeOrder = async (req, res) => {
         .json({ message: "order success", paymentMethord: "cod" });
     } else if (paymentMethod === "online-payment") {
       req.session.pendingOrder = { razorpayOrderId: order.orderId, userId };
-
+      console.log(order.orderId,userId);
+    
+        
+        
       return res.status(200).json({
         orderId: order.id, // Razorpay's order ID
         orderAmount: finalAmount,

@@ -1,7 +1,6 @@
 function getDetails() {
-  const paymentMethod = document.getElementById("payment-method").value; // Get the selected payment method
+  const paymentMethod = document.getElementById("payment-method").value;
   const selectedAddress = getSelectedAddress();
-  console.log(selectedAddress);
 
   if (!selectedAddress) {
     Swal.fire({
@@ -28,7 +27,7 @@ function getDetails() {
   // Prepare order data
   return (orderData = {
     paymentMethod,
-    addressId: selectedAddress, // Address ID
+    addressId: selectedAddress, 
   });
 }
 
@@ -68,17 +67,19 @@ async function placeOrder() {
       }).then(() => {
         window.location.href = "/order-confirmation";
       });
-    } else if (data.paymentMethord === "online-payment") {
+    } else if (data.paymentMethod === "online-payment") {
       // Online payment via Razorpay
-      console.log(data);
+      console.log(data );
+      console.log("its working");
+      
 
       const options = {
-        key: data.RAZORPAY_KEY_ID, // Razorpay Key ID
-        amount: data.orderAmount, // Amount in paise
-        currency: "INR", // Payment currency
+        key: data.RAZORPAY_KEY_ID, 
+        amount: data.orderAmount,   
+        currency: "INR", 
         name: "JERSYCart",
         description: "Test Transaction",
-        order_id: data.orderId, // Razorpay Order ID
+        order_id: data.orderId, 
         redirect: true,
         callback_url: "http://jercycart.shop/verify-payment",
         prefill: {
@@ -111,7 +112,6 @@ function getSelectedAddress() {
     'input[name="address"]:checked'
   );
 
-  console.log(selectedAddress);
 
   if (selectedAddress) {
     return selectedAddress.getAttribute("id");

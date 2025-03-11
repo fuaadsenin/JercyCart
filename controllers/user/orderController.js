@@ -6,7 +6,7 @@ const Address = require("../../models/addressSchema");
 const Wallet = require("../../models/walletSchema");
 const mongoose = require("mongoose");
 const wishlist = require("../../models/wishlistSchema");
-const Cart=require("../../models/cartSchema")
+const Cart = require("../../models/cartSchema")
 
 const getOrdersPage = async (req, res) => {
   // Retrieve the logged-in user's ID from the session
@@ -19,9 +19,9 @@ const getOrdersPage = async (req, res) => {
   try {
     // Fetch the logged-in user's details
     const user = await User.findById(userId);
-    wishlistCount=user.wishlist.length
+    wishlistCount = user.wishlist.length
 
-    const cart=await Cart.findOne({userId:user._id})
+    const cart = await Cart.findOne({ userId: user._id })
     cartCount = cart ? cart.items.length : 0;
 
     if (!user) {
@@ -45,7 +45,7 @@ const getOrdersPage = async (req, res) => {
     res.render("my-order", {
       orders, // Pass the fetched orders
       user, // Pass the user details
-      message: orders.length === 0 ? "No orders found." : null, 
+      message: orders.length === 0 ? "No orders found." : null,
       wishlistCount,
       cartCount,
     });
@@ -90,7 +90,7 @@ const cancelOrder = async (req, res) => {
       console.log("pay:", order.paymentId);
 
       // Refund to wallet if no payment ID
-      if (order.paymentId !== null||order.paymentMethod==="wallet") {
+      if (order.paymentId !== null || order.paymentMethod === "wallet") {
         let wallet = await Wallet.findOne({ user: order.userId });
 
         if (!wallet) {
@@ -169,7 +169,7 @@ const removeProduct = async (req, res) => {
       await product.save();
     }
 
-  
+
 
     // Remove product from order
     order.orderedItems.splice(productIndex, 1);
@@ -420,11 +420,9 @@ const invoiceDownload = async (req, res) => {
               <h2>Order Details</h2>
               <p><strong>Billing Name:</strong> ${order.userId.name}</p>
               <div class="address">
-                <p><strong>Billing Address:</strong> ${
-                  specificAddress.addressType
-                },${specificAddress.landMark}, ${specificAddress.city}, ${
-      specificAddress.state
-    } - ${specificAddress.pincode}</p>
+                <p><strong>Billing Address:</strong> ${specificAddress.addressType
+      },${specificAddress.landMark}, ${specificAddress.city}, ${specificAddress.state
+      } - ${specificAddress.pincode}</p>
                 <p><strong>Phone:</strong> ${specificAddress.phone}</p>
               </div>
               <p><strong>Total Price:</strong> ₹${order.finalAmount}</p>
@@ -443,8 +441,8 @@ const invoiceDownload = async (req, res) => {
                 </thead>
                 <tbody>
                   ${order.orderedItems
-                    .map(
-                      (item) => `
+        .map(
+          (item) => `
                     <tr>
                       <td>${item.product.productName}</td>
                       <td>${item.quantity}</td>
@@ -452,8 +450,8 @@ const invoiceDownload = async (req, res) => {
                       <td>₹${item.quantity * item.price}</td>
                     </tr>
                   `
-                    )
-                    .join("")}
+        )
+        .join("")}
                 </tbody>
               </table>
             </div>

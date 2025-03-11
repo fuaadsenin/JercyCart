@@ -62,38 +62,38 @@ function viewImage1(event) {
     reader.readAsDataURL(input.files[0]);
   }
   
-//   const selectedImages = [];
-//   document
-//     .getElementById("imageInput")
-//     .addEventListener("change", handleFileSelect);
+  const selectedImages = [];
+  document
+    .getElementById("imageInput")
+    .addEventListener("change", handleFileSelect);
   
-//   function handleFileSelect(event) {
-//     const addedImagesContainer = document.getElementById("addedImagesContainer");
-//     addedImagesContainer.innerHTML = "";
-//     const files = event.target.files;
-//     for (let i = 0; i < files.length; i++) {
-//       const file = files[i];
-//       selectedImages.push(file);
-//       const thumbnail = document.createElement("div");
-//       thumbnail.classList.add("thumbnail");
-//       const img = document.createElement("img");
-//       img.src = URL.createObjectURL(file);
-//       img.alt = "thumbnail";
-//       img.style.width = "50px";
-//       img.style.height = "auto";
-//       const removeIcon = document.createElement("span");
-//       removeIcon.classList.add("remove-icon");
-//       removeIcon.innerHTML = "&times;";
-//       removeIcon.addEventListener("click", function () {
-//         const index = selectedImages.indexOf(file);
-//         if (index !== -1) {
-//           selectedImages.splice(index, 1);
-//         }
-//         thumbnail.remove();
-//       });
-//       thumbnail.appendChild(img);
-//       thumbnail.appendChild(removeIcon);
-//       addedImagesContainer.appendChild(thumbnail);
-//     }
-//   }
+  function handleFileSelect(event) {
+    const addedImagesContainer = document.getElementById("addedImagesContainer");
+    addedImagesContainer.innerHTML = "";
+    const files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      selectedImages.push(file);
+      const thumbnail = document.createElement("div");
+      thumbnail.classList.add("thumbnail");
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.alt = "thumbnail";
+      img.style.width = "50px";
+      img.style.height = "auto";
+      const removeIcon = document.createElement("span");
+      removeIcon.classList.add("remove-icon");
+      removeIcon.innerHTML = "&times;";
+      removeIcon.addEventListener("click", function () {
+        const index = selectedImages.indexOf(file);
+        if (index !== -1) {
+          selectedImages.splice(index, 1);
+        }
+        thumbnail.remove();
+      });
+      thumbnail.appendChild(img);
+      thumbnail.appendChild(removeIcon);
+      addedImagesContainer.appendChild(thumbnail);
+    }
+  }
   
