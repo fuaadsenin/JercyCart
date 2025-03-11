@@ -57,10 +57,11 @@ const securePassword = async (password) => {
 const getForgotPassPage = async (req, res) => {
   try {
     // Check if user is logged in via session or other method
-    const user = req.session.user || null; // Default to null if no user is logged in
+    const user = req.session.user || null; 
+    
 
     // Pass 'user' to the view context
-    res.render("forgot-password", { message: null, user });
+    res.render("forgot-password", { message: null, user ,wishlistCount});
   } catch (error) {
     console.error("Error rendering forgot-password page:", error);
     res.redirect("/pageNotFound");
@@ -71,6 +72,7 @@ const forgotEmailValid = async (req, res) => {
   try {
     const { email } = req.body;
     const findUser = await User.findOne({ email });
+    
 
     if (findUser) {
       const otp = generateOtp();

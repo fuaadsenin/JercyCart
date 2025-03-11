@@ -496,6 +496,7 @@ footer .copyright {
                             <a href="/signup" class="sign-in-link">Sign Up</a>
                             <a href="/login" class="sign-in-link">Log In</a>
                         <% } %>
+                        <% if (user) { %>
                         <a href="/wishlist" class="wishlist-icon">
                             <img src="img/icon/heart.png" alt="Wishlist">
                             <% if (wishlistCount > 0) { %>
@@ -509,6 +510,7 @@ footer .copyright {
                                 <span class="badge"><%= cartCount %></span>
                             <% } %>
                         </a>
+                        <% } %>
                     </div>
                 </div>
             </div>
