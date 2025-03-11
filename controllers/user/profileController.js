@@ -307,8 +307,9 @@ const getAddress = async (req, res) => {
       cartCount = cart ? cart.items.length : 0;
     }
     const userData=await User.findOne({_id:user._id})
-    wishlistCount=userData.wishlist.length
+    wishlistCount=0
 
+   console.log(wishlistCount);
    
 
 
