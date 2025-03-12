@@ -287,13 +287,13 @@ const calculateOverallStats = (sales) => {
 };
 const PDFDocument = require("pdfkit");
 
-const pdf = require('html-pdf');
+const puppeteer = require("puppeteer");
 
 const downloadSalesReport = async (req, res) => {
   try {
-    const { filter, startDate, endDate } = req.body;  // Read from body
+    const { filter, startDate, endDate } = req.body;
 
-    console.log("Received data:", { filter, startDate, endDate });  // Log the data
+    console.log("Received data:", { filter, startDate, endDate });
 
     let filterQuery = {};
 
@@ -317,7 +317,7 @@ const downloadSalesReport = async (req, res) => {
       };
     }
 
-    console.log("Filter query:", filterQuery);  // Log the filter query
+    console.log("Filter query:", filterQuery);
 
     const sales = await Order.find(filterQuery).sort({ invoiceDate: -1 });
 
@@ -328,7 +328,7 @@ const downloadSalesReport = async (req, res) => {
 
     const overall = calculateOverallStats(sales);
 
-    // Render HTML for the PDF
+    // Generate HTML content
     const htmlContent = `
     <html>
         <head>
@@ -336,11 +336,9 @@ const downloadSalesReport = async (req, res) => {
             body { font-family: Arial, sans-serif; }
             .container { max-width: 800px; margin: 0 auto; padding: 20px; }
             .header { text-align: center; font-size: 24px; margin-bottom: 20px; }
-            .card { margin-bottom: 10px; }
             .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             .table th, .table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
             .table th { background-color: #f4f4f4; }
-            .text-center { text-align: center; }
           </style>
         </head>
         <body>
@@ -348,20 +346,10 @@ const downloadSalesReport = async (req, res) => {
             <div class="header">Sales Report</div>
             
             <h3>Overall Sales Summary</h3>
-            <div class="row text-center">
-              <div class="col">
-                <strong>Total Orders:</strong> ${overall.count}
-              </div>
-              <div class="col">
-                <strong>Total Amount:</strong> ₹${overall.totalAmount.toFixed(2)}
-              </div>
-              <div class="col">
-                <strong>Total Discount:</strong> ₹${overall.totalDiscount.toFixed(2)}
-              </div>
-              <div class="col">
-                <strong>Total Final Amount:</strong> ₹${overall.totalFinalAmount.toFixed(2)}
-              </div>
-            </div>
+            <p><strong>Total Orders:</strong> ${overall.count}</p>
+            <p><strong>Total Amount:</strong> ₹${overall.totalAmount.toFixed(2)}</p>
+            <p><strong>Total Discount:</strong> ₹${overall.totalDiscount.toFixed(2)}</p>
+            <p><strong>Total Final Amount:</strong> ₹${overall.totalFinalAmount.toFixed(2)}</p>
 
             <h3>Sales Table</h3>
             <table class="table">
@@ -393,26 +381,31 @@ const downloadSalesReport = async (req, res) => {
       </html>
     `;
 
-    const options = { format: 'A4' };
-
-    // Generate the PDF and send it back as a stream
-    pdf.create(htmlContent, options).toStream((err, stream) => {
-      if (err) {
-        console.error("PDF generation error:", err);  // Log PDF generation errors
-        return res.status(500).send("An error occurred while generating the PDF.");
-      }
-
-      // Set headers and pipe the stream to the response
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", 'attachment; filename="sales_report.pdf"');
-      stream.pipe(res);
+    // Launch Puppeteer
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle2", timeout: 60000 });
+
+    // Generate PDF
+    const pdfBuffer = await page.pdf({ format: "A4" });
+
+    await browser.close();
+
+    // Send the PDF to the client
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="sales_report.pdf"');
+    res.send(pdfBuffer);
+
   } catch (error) {
-    console.error("Error generating PDF:", error);  // Log any unexpected errors
+    console.error("Error generating PDF:", error);
     res.status(500).send("An error occurred while generating the PDF.");
   }
 };
+
 module.exports = {
   getOrderlist,
   updateOrderStatus,

@@ -1,4 +1,3 @@
-const pdf = require("html-pdf");
 const Order = require("../../models/orderSchema");
 const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
@@ -290,16 +289,16 @@ const returnOrder = async (req, res) => {
     });
   }
 };
+const puppeteer = require("puppeteer");
+
 const invoiceDownload = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-    // Check if the orderId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ error: "Invalid order ID format" });
     }
 
-    // Fetch the order details from the database
     const order = await Order.findById(orderId)
       .populate("userId", "name email")
       .populate("orderedItems.product", "productName productImage")
@@ -311,9 +310,8 @@ const invoiceDownload = async (req, res) => {
 
     const userId = order.userId._id;
     const addressId = order.address;
-
-    // Fetch the address details for the user
     const user = await Address.findOne({ userId });
+
     const specificAddress = user?.address.find(
       (addr) => addr._id.toString() === addressId.toString()
     );
@@ -322,7 +320,7 @@ const invoiceDownload = async (req, res) => {
       return res.status(404).json({ error: "Address not found" });
     }
 
-    // Create the HTML content for the invoice with enhanced styling
+    // Generate the invoice HTML
     const invoiceHTML = `
       <html>
         <head>
@@ -334,7 +332,6 @@ const invoiceDownload = async (req, res) => {
               background-color: #f4f4f4;
               color: #333;
             }
-
             .container {
               max-width: 800px;
               margin: 0 auto;
@@ -343,68 +340,37 @@ const invoiceDownload = async (req, res) => {
               border-radius: 8px;
               box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
-
             .header {
               text-align: center;
               margin-bottom: 30px;
               border-bottom: 2px solid #f1f1f1;
               padding-bottom: 20px;
             }
-
             .header h1 {
               color: #3498db;
             }
-
             .order-details {
               margin-bottom: 30px;
             }
-
-            .order-details h2 {
-              color: #3498db;
-            }
-
-            .order-details p {
-              font-size: 14px;
-              line-height: 1.6;
-            }
-
             .product-list {
               width: 100%;
               border-collapse: collapse;
               margin-top: 20px;
             }
-
             .product-list th, .product-list td {
               padding: 12px 15px;
               border: 1px solid #ddd;
               text-align: left;
             }
-
             .product-list th {
               background-color: #3498db;
               color: #fff;
             }
-
-            .product-list td {
-              background-color: #f9f9f9;
-            }
-
             .footer {
               text-align: center;
               margin-top: 40px;
               font-size: 14px;
               color: #777;
-            }
-
-            .total {
-              font-weight: bold;
-              color: #3498db;
-              font-size: 16px;
-              margin-top: 10px;
-            }
-
-            .address {
-              margin-top: 15px;
             }
           </style>
         </head>
@@ -415,19 +381,15 @@ const invoiceDownload = async (req, res) => {
               <p>Order ID: ${order.orderId}</p>
               <p>Invoice Date: ${new Date().toLocaleDateString()}</p>
             </div>
-
             <div class="order-details">
               <h2>Order Details</h2>
               <p><strong>Billing Name:</strong> ${order.userId.name}</p>
-              <div class="address">
-                <p><strong>Billing Address:</strong> ${specificAddress.addressType
-      },${specificAddress.landMark}, ${specificAddress.city}, ${specificAddress.state
-      } - ${specificAddress.pincode}</p>
-                <p><strong>Phone:</strong> ${specificAddress.phone}</p>
-              </div>
+              <p><strong>Billing Address:</strong> ${specificAddress.addressType}, 
+                 ${specificAddress.landMark}, ${specificAddress.city}, 
+                 ${specificAddress.state} - ${specificAddress.pincode}</p>
+              <p><strong>Phone:</strong> ${specificAddress.phone}</p>
               <p><strong>Total Price:</strong> ₹${order.finalAmount}</p>
             </div>
-
             <div class="product-list">
               <h3>Ordered Items</h3>
               <table>
@@ -441,25 +403,20 @@ const invoiceDownload = async (req, res) => {
                 </thead>
                 <tbody>
                   ${order.orderedItems
-        .map(
-          (item) => `
-                    <tr>
-                      <td>${item.product.productName}</td>
-                      <td>${item.quantity}</td>
-                      <td>₹${item.price}</td>
-                      <td>₹${item.quantity * item.price}</td>
-                    </tr>
-                  `
-        )
-        .join("")}
+                    .map(
+                      (item) => `
+                      <tr>
+                        <td>${item.product.productName}</td>
+                        <td>${item.quantity}</td>
+                        <td>₹${item.price}</td>
+                        <td>₹${item.quantity * item.price}</td>
+                      </tr>
+                    `
+                    )
+                    .join("")}
                 </tbody>
               </table>
             </div>
-
-            <div class="total">
-              <p>Total Amount: ₹${order.finalAmount}</p>
-            </div>
-
             <div class="footer">
               <p>Thank you for shopping with us!</p>
             </div>
@@ -468,16 +425,19 @@ const invoiceDownload = async (req, res) => {
       </html>
     `;
 
-    pdf.create(invoiceHTML, { format: "A4" }).toBuffer((err, pdfBuffer) => {
-      if (err) {
-        console.error("Error generating PDF:", err);
-        return res.status(500).json({ error: "Error generating invoice PDF" });
-      }
+    // **Use Puppeteer to generate a PDF**
+    const browser = await puppeteer.launch({ headless: "new" }); // Ensures a modern headless mode
+    const page = await browser.newPage();
+    await page.setContent(invoiceHTML, { waitUntil: "networkidle0" });
 
-      // Send the PDF as a response
-      res.contentType("application/pdf");
-      res.send(pdfBuffer);
-    });
+    // Generate PDF buffer
+    const pdfBuffer = await page.pdf({ format: "A4" });
+
+    await browser.close();
+
+    // Send the generated PDF as response
+    res.contentType("application/pdf");
+    res.send(pdfBuffer);
   } catch (error) {
     console.error("Error generating invoice:", error);
     res.status(500).json({ error: "Error generating invoice PDF" });
